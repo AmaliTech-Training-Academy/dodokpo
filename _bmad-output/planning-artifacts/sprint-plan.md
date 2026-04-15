@@ -74,7 +74,7 @@ flowchart LR
 
 ## Sprint-by-Sprint Breakdown
 
-### Sprint 1 (Weeks 1-2): Foundations
+### Sprint 1: Foundations
 
 **Sprint Goal:** Lay the foundational schemas and deliver independent frontend features.
 
@@ -99,7 +99,7 @@ flowchart LR
 
 **Delta Sprint 1 Output:** Multi-file IDE functional, compatibility check frontend complete. *No backend dependencies — fully independent work.*
 
-#### Cross-Team Dependencies — Sprint 1
+#### Dependencies — Sprint 1
 ```mermaid
 flowchart LR
     subgraph "Sprint 1"
@@ -127,7 +127,7 @@ flowchart LR
 
 ---
 
-### Sprint 2 (Weeks 3-4): Intelligence & Grading
+### Sprint 2: Intelligence & Grading
 
 **Sprint Goal:** Deliver duplicate detection, AI generation, and auto-grading.
 
@@ -154,7 +154,7 @@ flowchart LR
 
 **Dependency:** Story 6.1 depends on Story 5.1 (Sprint 1) — multi-file IDE must be merged.
 
-#### Cross-Team Dependencies — Sprint 2
+#### Dependencies — Sprint 2
 ```mermaid
 flowchart LR
     subgraph "Sprint 1 (Done)"
@@ -188,7 +188,7 @@ flowchart LR
 
 ---
 
-### Sprint 3 (Weeks 5-6): Governance & Accessibility
+### Sprint 3: Governance & A11y
 
 **Sprint Goal:** Complete AI review workflow, bulk upload, and accessibility baseline.
 
@@ -214,7 +214,7 @@ flowchart LR
 
 **Delta Sprint 3 Output:** Auto-grading complete with AI review, accessibility baseline achieved, rejection analytics live.
 
-#### Cross-Team Dependencies — Sprint 3
+#### Dependencies — Sprint 3
 ```mermaid
 flowchart LR
     subgraph "Sprint 2 (Done)"
@@ -249,7 +249,7 @@ flowchart LR
 
 ---
 
-### Sprint 4 (Weeks 7-8): Calibration & Adaptive Testing
+### Sprint 4: Calibration & Adaptive
 
 **Sprint Goal:** Launch calibration pipeline and begin adaptive testing engine.
 
@@ -277,7 +277,7 @@ flowchart LR
 
 **Critical Dependency:** Story 10.1 (adaptive engine) requires calibrated difficulty tiers from Alpha's Story 7.1. **Alpha must merge 7.1 by mid-Sprint 4 at latest.**
 
-#### Cross-Team Dependencies — Sprint 4
+#### Dependencies — Sprint 4
 ```mermaid
 flowchart LR
     subgraph "Sprint 3 (Done)"
@@ -315,7 +315,7 @@ flowchart LR
 
 ---
 
-### Sprint 5 (Weeks 9-10): Integration & Polish
+### Sprint 5: Integration & Polish
 
 **Sprint Goal:** Complete reporting enrichment, skill profiles, assessment lifecycle, and end-to-end integration testing.
 
@@ -343,7 +343,7 @@ flowchart LR
 
 **Delta Sprint 5 Output:** Adaptive testing complete with skill profiles, AI analytics streaming, feature flag admin.
 
-#### Cross-Team Dependencies — Sprint 5
+#### Dependencies — Sprint 5
 ```mermaid
 flowchart LR
     subgraph "Sprint 4 (Done)"
@@ -501,7 +501,7 @@ The only **hard cross-team blocker** is:
 
 ## Integration Points (Nexus Coordination)
 
-### Joint Sprint Planning Part A (Every Sprint)
+### Joint Planning (Per Sprint)
 
 | Sprint | Key Alignment Topics |
 |--------|---------------------|

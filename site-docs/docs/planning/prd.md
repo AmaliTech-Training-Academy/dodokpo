@@ -113,7 +113,7 @@ Dodokpo is purpose-built for AmaliTech's talent lifecycle — from recruitment s
 
 ## User Journeys
 
-### Journey 1: Akua — Test Manager (Question Bank & Test Creation)
+### Journey 1: Akua — Test Manager
 
 **Situation:** Akua manages technical assessments for AmaliTech's Recruitment unit. She creates questions across multiple domains (JavaScript, Python, algorithms) and builds tests for different role levels. She currently spends hours curating questions manually and worries about duplicate content across the growing question bank.
 
@@ -127,7 +127,7 @@ Akua opens Question Management and clicks "AI Generate." She provides a domain (
 
 ---
 
-### Journey 2: Kofi — Candidate (Assessment Taking)
+### Journey 2: Kofi — Candidate
 
 **Situation:** Kofi is a junior developer applying to AmaliTech's Service Center. He received an assessment link via email for a JavaScript + algorithmic thinking evaluation. He's nervous — last time he took an online assessment elsewhere, his browser crashed mid-test and his submission was lost.
 
@@ -141,7 +141,7 @@ Before Kofi even starts, the system runs a compatibility check: browser version,
 
 ---
 
-### Journey 3: Ama — Candidate (Adaptive Coding Assessment)
+### Journey 3: Ama — Adaptive Coding
 
 **Situation:** Ama is a mid-level Python developer being evaluated for a senior backend role at AmaliTech's Training Center. She's strong in algorithms but hasn't worked much with system design patterns.
 
@@ -155,7 +155,7 @@ Ama starts the coding assessment. The first question is Intermediate-level Pytho
 
 ---
 
-### Journey 4: Kwame — Organization Admin (Setup & Governance)
+### Journey 4: Kwame — Org Admin
 
 **Situation:** Kwame is the Organization Admin for AmaliTech's Recruitment unit. He manages 15 test managers, configures roles and permissions, and ensures assessment quality across the org.
 
@@ -169,7 +169,7 @@ Kwame's workflow gains governance tools. He configures question archiving rules 
 
 ---
 
-### Journey 5: Yaa — System Admin (Platform Operations)
+### Journey 5: Yaa — System Admin
 
 **Situation:** Yaa is the System Admin managing the entire Dodokpo platform across all three business units. She handles organization creation, application approvals, system-wide configuration, and monitoring.
 
@@ -183,7 +183,7 @@ With the pre-test compatibility check, Yaa sees a dramatic drop in technical sup
 
 ---
 
-### Journey 6: External API Consumer (Programmatic Integration)
+### Journey 6: API Consumer
 
 **Situation:** AmaliTech's internal CMS team needs to programmatically trigger assessments for new hires, pull candidate results into their HR dashboard, and sync skill-level data with the training pipeline.
 
@@ -334,7 +334,7 @@ The API surface expands. The CMS team can now query candidate skill profiles gen
 - FR20: Test managers can bulk upload coding questions via CSV/JSON template with validation
 - FR21: System reports bulk upload progress, success/failure counts, and downloadable error details
 
-### Assessment Creation & Dispatch
+### Assessment & Dispatch
 
 - FR22: Test managers can create, configure, and dispatch assessments with proctor levels, duration, and pass marks
 - FR23: Test managers can dispatch assessments via email, generic link, or bulk batch operations
@@ -351,7 +351,7 @@ The API surface expands. The CMS team can now query candidate skill profiles gen
 - FR31: System enforces resource constraints (time limit, memory limit) per test case execution
 - FR32: AI reviews candidate code for quality, patterns, and best practices (supplementing auto-grading)
 
-### Candidate Experience & Proctoring
+### Candidate & Proctoring
 
 - FR33: System runs pre-test compatibility check validating browser, OS, network stability, camera, microphone, and screen sharing
 - FR34: System provides clear remediation guidance when compatibility issues are detected
@@ -396,20 +396,20 @@ The API surface expands. The CMS team can now query candidate skill profiles gen
 - FR61: System supports webhook callbacks to external systems with enriched assessment result payloads
 - FR62: Test managers can export candidate results and assessment data
 
-### Notifications & Real-Time Updates
+### Notifications
 
 - FR63: System delivers in-app notifications in real-time for assessment events, user lifecycle events, and administrative actions
 - FR64: System sends email notifications for assessment dispatch, completion, password management, and account events
 - FR65: Users can configure notification preferences and toggle notification categories on/off
 - FR66: Users can mark notifications as read, unread, and bulk-manage notifications
 
-### Feature Flags & Configuration
+### Feature Flags
 
 - FR67: System admins can manage feature flags with real-time propagation to all services
 - FR68: Organization admins can configure organization-specific settings (branding, assessment defaults, allowed email domains)
 - FR69: System admins can roll out features gradually by organization via feature flag targeting
 
-### External API Integration
+### External API
 
 - FR70: External systems can authenticate via API keys to dispatch assessments and retrieve results programmatically
 - FR71: API consumers can query candidate skill profiles generated by adaptive testing

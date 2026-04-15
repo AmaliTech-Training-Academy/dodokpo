@@ -76,7 +76,7 @@ flowchart TB
 **Dependencies:** None (foundational -- must be first)
 **NFRs Addressed:** NFR8 (scalable question bank), NFR19 (backward-compatible migrations)
 
-### Epic 2: Difficulty Classification & Intelligent Assembly
+### Epic 2: Difficulty & Intelligent Assembly
 **Team:** Team A
 **Goal:** Classify every question by difficulty tier and Bloom's Taxonomy, then let test managers build tests by specifying distribution targets that the system fills automatically -- transforming test assembly from manual curation to intelligent composition.
 **FRs Covered:** FR1, FR4, FR5, FR7, FR8, FR9, FR10
@@ -84,7 +84,7 @@ flowchart TB
 **Dependencies:** E1 (versioning schema must exist for override tracking)
 **NFRs Addressed:** NFR8 (sub-second search with classification filters)
 
-### Epic 3: AI Question Generation & Duplicate Detection
+### Epic 3: AI Generation & Duplicates
 **Team:** Team A
 **Goal:** Detect near-duplicate questions to prevent bank pollution, and generate new questions via AI with a governed human review workflow -- reducing manual curation effort by 40-60%.
 **FRs Covered:** FR11, FR12, FR13, FR14, FR15
@@ -124,7 +124,7 @@ flowchart TB
 **Dependencies:** E2 (difficulty schema and Bloom's classification must exist)
 **NFRs Addressed:** NFR9 (event consumer < 5s), NFR18 (at-least-once event delivery)
 
-### Epic 8: Pre-Test Compatibility & Candidate Experience
+### Epic 8: Compatibility & Candidate UX
 **Team:** Team B
 **Goal:** Validate browser, OS, network stability, camera, mic, and screen-sharing before assessments begin, with clear remediation guidance -- eliminating surprise technical failures and reducing support tickets by ~30%.
 **FRs Covered:** FR33, FR34, FR35, FR36, FR37, FR38, FR39, FR40, FR41, FR42
@@ -132,7 +132,7 @@ flowchart TB
 **Dependencies:** None (independent, can start immediately)
 **NFRs Addressed:** NFR20-23 (WCAG 2.1 AA), NFR17 (session recovery)
 
-### Epic 9: Assessment Lifecycle & Reporting Enrichment
+### Epic 9: Assessment & Reporting
 **Team:** Team A (reporting enrichment) + Team B (assessment lifecycle, notifications, UI)
 **Goal:** Strengthen the existing assessment creation, dispatch, user management, skills, reporting, notifications, feature flags, and external API capabilities -- enriching all existing flows with data from the new Q2 features (difficulty profiles, compatibility outcomes, auto-grading results).
 **FRs Covered:** FR22, FR23, FR24, FR25, FR48, FR49, FR50, FR51, FR52, FR53, FR54, FR55, FR56, FR57, FR58, FR59, FR60, FR61, FR62, FR63, FR64, FR65, FR66, FR67, FR68, FR69, FR70, FR72
@@ -154,7 +154,7 @@ flowchart TB
 
 ### Epic 1: Question Versioning & Lifecycle
 
-#### Story 1.1: Question Version Creation and History
+#### Story 1.1: Version Creation
 **Team:** Team A
 **FRs:** FR16
 
@@ -171,7 +171,7 @@ So that I can track how questions evolve over time and never lose previous conte
 
 ---
 
-#### Story 1.2: Version Comparison (Side-by-Side Diff)
+#### Story 1.2: Version Diff
 **Team:** Team A
 **FRs:** FR17
 
@@ -202,7 +202,7 @@ So that they are excluded from active test pools but their history and historica
 
 ---
 
-#### Story 1.4: Global Questions Across Organizations
+#### Story 1.4: Global Questions
 **Team:** Team A
 **FRs:** FR19
 
@@ -219,9 +219,9 @@ So that high-quality questions can be shared without duplication across AmaliTec
 
 ---
 
-### Epic 2: Difficulty Classification & Intelligent Assembly
+### Epic 2: Difficulty & Intelligent Assembly
 
-#### Story 2.1: Difficulty Tier and Bloom's Taxonomy Schema
+#### Story 2.1: Difficulty & Bloom's Schema
 **Team:** Team A
 **FRs:** FR1
 
@@ -236,7 +236,7 @@ So that I can understand the challenge level and cognitive demand of each questi
 
 ---
 
-#### Story 2.2: Bloom's Taxonomy Assignment by Test Managers
+#### Story 2.2: Bloom's Assignment
 **Team:** Team A
 **FRs:** FR4
 
@@ -251,7 +251,7 @@ So that I can classify the cognitive demand of questions based on my domain expe
 
 ---
 
-#### Story 2.3: Manual Difficulty Override with Audit Trail
+#### Story 2.3: Difficulty Override
 **Team:** Team A
 **FRs:** FR5
 
@@ -267,7 +267,7 @@ So that I can correct misclassifications while the override is tracked for trans
 
 ---
 
-#### Story 2.4: Difficulty and Bloom's Distribution Specification
+#### Story 2.4: Distribution Config
 **Team:** Team A
 **FRs:** FR7
 
@@ -282,7 +282,7 @@ So that I can ensure balanced coverage appropriate for the role level being asse
 
 ---
 
-#### Story 2.5: Intelligent Question Selection from Classified Pools
+#### Story 2.5: Intelligent Selection
 **Team:** Team A
 **FRs:** FR8, FR9
 
@@ -297,7 +297,7 @@ So that test assembly is automated and each candidate receives a unique question
 
 ---
 
-#### Story 2.6: Test Distribution Preview Before Dispatch
+#### Story 2.6: Distribution Preview
 **Team:** Team A
 **FRs:** FR10
 
@@ -312,9 +312,9 @@ So that I can verify the assessment is balanced and appropriate.
 
 ---
 
-### Epic 3: AI Question Generation & Duplicate Detection
+### Epic 3: AI Generation & Duplicates
 
-#### Story 3.1: Duplicate Detection Engine (Backend)
+#### Story 3.1: Duplicate Engine
 **Team:** Team A
 **FRs:** FR14
 
@@ -330,7 +330,7 @@ So that I avoid polluting the question bank with redundant content.
 
 ---
 
-#### Story 3.2: Duplicate Detection Threshold and Blocking
+#### Story 3.2: Duplicate Threshold
 **Team:** Team A
 **FRs:** FR15
 
@@ -361,7 +361,7 @@ So that I can rapidly expand the question bank without manual authoring.
 
 ---
 
-#### Story 3.4: AI-Generated Question Review Workflow
+#### Story 3.4: AI Review Workflow
 **Team:** Team A
 **FRs:** FR12
 
@@ -376,7 +376,7 @@ So that no AI-generated question enters the bank without human validation.
 
 ---
 
-#### Story 3.5: AI Question Approve, Edit, Reject Actions
+#### Story 3.5: AI Approve/Reject
 **Team:** Team A
 **FRs:** FR13
 
@@ -394,7 +394,7 @@ So that the review workflow produces an auditable trail of human oversight.
 
 ### Epic 4: Bulk Upload & Question Governance
 
-#### Story 4.1: Coding Question Bulk Upload via CSV/JSON
+#### Story 4.1: Bulk Upload
 **Team:** Team A
 **FRs:** FR20
 
@@ -411,7 +411,7 @@ So that I can ingest large question sets in one operation instead of creating ea
 
 ---
 
-#### Story 4.2: Bulk Upload Progress and Error Reporting
+#### Story 4.2: Upload Progress
 **Team:** Team A
 **FRs:** FR21
 
@@ -429,7 +429,7 @@ So that I can monitor the upload and fix any issues without guessing what went w
 
 ### Epic 5: Multi-File Coding IDE
 
-#### Story 5.1: Multi-File Project Editor (Frontend)
+#### Story 5.1: Multi-File Editor
 **Team:** Team B
 **FRs:** FR26
 
@@ -446,7 +446,7 @@ So that the assessment mimics real development work with proper file organizatio
 
 ---
 
-#### Story 5.2: Multi-File Project Configuration (Test Manager)
+#### Story 5.2: Multi-File Config
 **Team:** Team B
 **FRs:** FR26
 
@@ -462,7 +462,7 @@ So that candidates work on realistic project layouts with pre-populated starter 
 
 ---
 
-#### Story 5.3: Multi-File Execution via Judge0
+#### Story 5.3: Multi-File Execution
 **Team:** Team B
 **FRs:** FR26
 
@@ -480,7 +480,7 @@ So that I can test my solution as a complete project, not isolated fragments.
 
 ### Epic 6: Auto-Grading & AI Code Review
 
-#### Story 6.1: Auto-Grading with Test Cases and Resource Limits
+#### Story 6.1: Auto-Grading Engine
 **Team:** Team B
 **FRs:** FR27, FR29, FR31
 
@@ -497,7 +497,7 @@ So that I receive immediate, objective feedback on my solution.
 
 ---
 
-#### Story 6.2: Test Case Execution Logs Display
+#### Story 6.2: Execution Logs
 **Team:** Team B
 **FRs:** FR28
 
@@ -512,7 +512,7 @@ So that I can understand which test cases my solution passes and where it fails.
 
 ---
 
-#### Story 6.3: Public and Hidden Test Case Management
+#### Story 6.3: Test Case Management
 **Team:** Team B
 **FRs:** FR30
 
@@ -546,7 +546,7 @@ So that evaluation goes beyond test case pass/fail to assess code craftsmanship.
 
 ### Epic 7: Calibration Pipeline
 
-#### Story 7.1: Calibration Score Computation from Historical Data
+#### Story 7.1: Calibration Pipeline
 **Team:** Team A
 **FRs:** FR2, FR3
 
@@ -562,7 +562,7 @@ So that the question bank reflects actual difficulty as experienced by candidate
 
 ---
 
-#### Story 7.2: Under-Calibrated Question Flagging
+#### Story 7.2: Calibration Flagging
 **Team:** Team A
 **FRs:** FR6
 
@@ -577,9 +577,9 @@ So that I know which questions have unreliable difficulty classifications.
 
 ---
 
-### Epic 8: Pre-Test Compatibility & Candidate Experience
+### Epic 8: Compatibility & Candidate UX
 
-#### Story 8.1: Browser and OS Compatibility Check
+#### Story 8.1: Browser & OS Check
 **Team:** Team B
 **FRs:** FR33
 
@@ -595,7 +595,7 @@ So that I know my setup is compatible and I will not encounter technical failure
 
 ---
 
-#### Story 8.2: Network Stability and Hardware Check
+#### Story 8.2: Network & Hardware
 **Team:** Team B
 **FRs:** FR34, FR35
 
@@ -611,7 +611,7 @@ So that I can resolve any issues before the timed assessment begins.
 
 ---
 
-#### Story 8.3: Compatibility Check Analytics Dashboard
+#### Story 8.3: Compat Analytics
 **Team:** Team B
 **FRs:** FR41
 
@@ -626,7 +626,7 @@ So that I can identify systemic issues and proactively improve guidance.
 
 ---
 
-#### Story 8.4: Assessment Rejection Rate Tracking
+#### Story 8.4: Rejection Tracking
 **Team:** Team B
 **FRs:** FR42
 
@@ -641,7 +641,7 @@ So that I can measure the impact of compatibility checks on reducing rejections.
 
 ---
 
-#### Story 8.5: Proctoring Enhancements (Violation Debounce)
+#### Story 8.5: Proctoring Enhancements
 **Team:** Team B
 **FRs:** FR36, FR37, FR38, FR39
 
@@ -673,9 +673,9 @@ So that I receive feedback on my performance.
 
 ---
 
-### Epic 9: Assessment Lifecycle & Reporting Enrichment
+### Epic 9: Assessment & Reporting
 
-#### Story 9.1: Assessment Creation and Dispatch with Difficulty Distribution
+#### Story 9.1: Assessment Dispatch
 **Team:** Team B
 **FRs:** FR22, FR23
 
@@ -690,7 +690,7 @@ So that dispatched assessments are balanced and appropriately challenging.
 
 ---
 
-#### Story 9.2: Assessment Tagging and Dispatch History
+#### Story 9.2: Tags & History
 **Team:** Team B
 **FRs:** FR24, FR25
 
@@ -734,7 +734,7 @@ So that new organizations can be onboarded through a governed process.
 
 ---
 
-#### Story 9.5: Skills Management and Assessment Assignment
+#### Story 9.5: Skills Management
 **Team:** Team A
 **FRs:** FR53, FR54
 
@@ -749,7 +749,7 @@ So that assessments are tied to specific competency milestones.
 
 ---
 
-#### Story 9.6: Skills Bulk Upload and CMS Integration
+#### Story 9.6: Skills Upload & CMS
 **Team:** Team A
 **FRs:** FR55, FR56
 
@@ -764,7 +764,7 @@ So that skills can be synchronized with AmaliTech's CMS without manual entry.
 
 ---
 
-#### Story 9.7: Assessment Reporting with Enriched Data
+#### Story 9.7: Enriched Reporting
 **Team:** Team A
 **FRs:** FR57, FR59, FR62
 
@@ -779,7 +779,7 @@ So that reports provide comprehensive insight into candidate performance.
 
 ---
 
-#### Story 9.8: AI-Powered Analytics and Real-Time Streaming
+#### Story 9.8: AI Analytics
 **Team:** Team A
 **FRs:** FR58, FR60
 
@@ -794,7 +794,7 @@ So that I receive actionable analytics without waiting for batch reports.
 
 ---
 
-#### Story 9.9: Webhook Callbacks and External API Enrichment
+#### Story 9.9: Webhooks & API
 **Team:** Team A
 **FRs:** FR61, FR70, FR72
 
@@ -810,7 +810,7 @@ So that our CMS receives comprehensive assessment data without polling.
 
 ---
 
-#### Story 9.10: Notification Enhancements for Q2 Events
+#### Story 9.10: Notifications
 **Team:** Team B
 **FRs:** FR63, FR64, FR65, FR66
 
@@ -826,7 +826,7 @@ So that I stay informed about platform activity relevant to my role.
 
 ---
 
-#### Story 9.11: Feature Flag Management for Q2 Rollout
+#### Story 9.11: Feature Flags
 **Team:** Team B
 **FRs:** FR67, FR68, FR69
 
@@ -843,7 +843,7 @@ So that I can roll out features gradually (Training Center first, then Recruitme
 
 ### Epic 10: Adaptive Testing Engine
 
-#### Story 10.1: Dynamic Difficulty Adjustment During Assessment
+#### Story 10.1: Adaptive Engine
 **Team:** Team B
 **FRs:** FR43, FR44, FR45
 
@@ -860,7 +860,7 @@ So that I am assessed at my true skill level rather than a fixed difficulty.
 
 ---
 
-#### Story 10.2: Skill-Level Profile Generation
+#### Story 10.2: Skill Profiles
 **Team:** Team B
 **FRs:** FR46
 
@@ -891,7 +891,7 @@ So that I can choose between fixed-difficulty and adaptive assessments based on 
 
 ---
 
-#### Story 10.4: Skill Profile API for External Consumers
+#### Story 10.4: Skill Profile API
 **Team:** Team B
 **FRs:** FR71
 
@@ -1014,7 +1014,7 @@ flowchart LR
 
 ---
 
-## 6. Story Dependency Chain Per Team
+## 6. Story Chains Per Team
 
 ```mermaid
 flowchart TD
