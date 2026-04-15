@@ -21,8 +21,9 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
     - navigation.top
     - toc.follow
     - search.suggest
@@ -54,19 +55,23 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Project Documentation:
+  - Project Docs:
     - Overview: project/project-overview.md
-    - Backend Architecture: project/architecture-backend.md
-    - Frontend Architecture: project/architecture-frontend.md
-    - Integration Architecture: project/integration-architecture.md
-    - API Contracts: project/api-contracts-backend.md
-    - Data Models: project/data-models-backend.md
-    - Component Inventory: project/component-inventory-frontend.md
-    - Source Tree: project/source-tree-analysis.md
-    - Development Guide: project/development-guide.md
-    - Deployment Guide: project/deployment-guide.md
-  - Planning Artifacts:
+    - Architecture:
+      - Backend: project/architecture-backend.md
+      - Frontend: project/architecture-frontend.md
+      - Integration: project/integration-architecture.md
+    - API & Data:
+      - API Contracts: project/api-contracts-backend.md
+      - Data Models: project/data-models-backend.md
+    - UI & Structure:
+      - Components: project/component-inventory-frontend.md
+      - Source Tree: project/source-tree-analysis.md
+    - Operations:
+      - Dev Guide: project/development-guide.md
+      - Deploy Guide: project/deployment-guide.md
+  - Planning:
     - PRD: planning/prd.md
-    - Architecture Decisions: planning/architecture.md
+    - Architecture: planning/architecture.md
     - Epics & Stories: planning/epics.md
     - Sprint Plan: planning/sprint-plan.md
