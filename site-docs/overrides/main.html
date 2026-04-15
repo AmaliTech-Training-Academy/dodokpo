@@ -2,13 +2,32 @@
 
 {% block extrahead %}
 <script>
-// Strip <code> wrappers from superfences mermaid blocks
-// Runs synchronously in <head> so it executes before any deferred scripts
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('pre.mermaid code').forEach(function(code) {
-    var pre = code.parentElement;
-    pre.textContent = code.textContent;
+// Must run BEFORE mermaid.js processes elements.
+// Use MutationObserver to catch <pre class="mermaid"><code> as they appear in DOM
+// and strip the <code> wrapper immediately, before mermaid's DOMContentLoaded handler.
+(function() {
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      m.addedNodes.forEach(function(node) {
+        if (node.nodeType !== 1) return;
+        // Check the node itself
+        if (node.matches && node.matches('pre.mermaid')) {
+          var code = node.querySelector('code');
+          if (code) node.textContent = code.textContent;
+        }
+        // Check descendants
+        if (node.querySelectorAll) {
+          node.querySelectorAll('pre.mermaid code').forEach(function(code) {
+            var pre = code.parentElement;
+            pre.textContent = code.textContent;
+          });
+        }
+      });
+    });
   });
-});
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  // Disconnect after a few seconds (mermaid should have processed by then)
+  setTimeout(function() { observer.disconnect(); }, 10000);
+})();
 </script>
 {% endblock %}
