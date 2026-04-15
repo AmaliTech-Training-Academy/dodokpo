@@ -33,6 +33,33 @@
 | dodokpo-next | Angular 20 | Module Federation Remote (expansion) |
 | libs/shared | Angular | Shared services, interfaces, directives, styles, utils |
 
+---
+
+## Generated Documentation
+
+### Architecture
+
+- [Project Overview](./project-overview.md) -- Executive summary, tech stack, service inventory
+- [Architecture -- Backend](./architecture-backend.md) -- Microservices architecture, service descriptions, auth, Kafka, observability
+- [Architecture -- Frontend](./architecture-frontend.md) -- Module Federation, routing, state management, proctoring pipeline, theming
+- [Integration Architecture](./integration-architecture.md) -- How services communicate (HTTP + Kafka), traffic flow, JWT flow, SSE streams
+
+### API & Data
+
+- [API Contracts -- Backend](./api-contracts-backend.md) -- All HTTP endpoints across 10 services
+- [Data Models -- Backend](./data-models-backend.md) -- PostgreSQL, DynamoDB, S3 schemas for all services
+
+### Components & UI
+
+- [Component Inventory -- Frontend](./component-inventory-frontend.md) -- 150+ Angular components organized by feature area
+- [Source Tree Analysis](./source-tree-analysis.md) -- Annotated directory tree with entry points
+
+### Operations
+
+- [Development Guide](./development-guide.md) -- Prerequisites, setup, build, test, lint commands
+- [Deployment Guide](./deployment-guide.md) -- Docker, CI/CD, serverless, monitoring, health checks
+
+---
 
 ## Existing Documentation
 
@@ -68,5 +95,37 @@
 - [Face Detection Lazy Loading](../frontend/docs/FACE_DETECTION_LAZY_LOADING.md) -- Lazy loading for face detection
 - [ID Verification UX Improvements](../frontend/docs/ID_VERIFICATION_UX_IMPROVEMENTS.md) -- ID verification UX
 
+---
+
+## Getting Started
+
+### Backend
+
+```bash
+cd backend/
+docker compose up                    # Start infrastructure (Postgres, Redis, Kafka, DynamoDB)
+cd apps/<service>/
+cp example.env .env                  # Configure environment
+npm install && npx prisma generate && npx prisma migrate deploy
+npm run dev                          # Start development server
+```
+
+### Frontend
+
+```bash
+cd frontend/
+cp .env.example .env
+npm install
+npm start                            # Start dodokpo-core on port 4200
+```
+
+### Full Stack
+
+```bash
+cd backend/ && docker compose --profile all up    # All backend services + infra
+cd frontend/ && npm run start:servers             # Both frontend apps
+```
+
+---
 
 *Generated on 2026-04-15 by BMAD Document Project (exhaustive scan)*

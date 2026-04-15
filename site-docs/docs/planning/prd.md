@@ -1,4 +1,3 @@
-
 # Product Requirements Document - Dodokpo
 
 **Author:** Thomas
@@ -126,6 +125,21 @@ Akua opens Question Management and clicks "AI Generate." She provides a domain (
 
 **Capabilities Revealed:** AI-assisted question generation, duplicate detection, question versioning, bulk upload (coding), difficulty calibration, auto-assignment by difficulty pool
 
+---
+
+### Journey 2: Kofi — Candidate (Assessment Taking)
+
+**Situation:** Kofi is a junior developer applying to AmaliTech's Service Center. He received an assessment link via email for a JavaScript + algorithmic thinking evaluation. He's nervous — last time he took an online assessment elsewhere, his browser crashed mid-test and his submission was lost.
+
+**Today's Journey:**
+Kofi clicks the assessment link, enters his email, reads the honour code, grants camera/screen permissions, goes through ID verification and face capture, then starts the test. Partway through, his WiFi drops for 3 seconds — the proctoring system logs a violation. His screen goes blank momentarily. He panics, refreshes, and loses his draft answers for the current question. He finishes the assessment stressed, unsure if the violations will invalidate his results. His assessment gets flagged for review, adding manual work for the test manager.
+
+**Q2 Transformed Journey:**
+Before Kofi even starts, the system runs a compatibility check: browser version, OS, network stability (latency + bandwidth test), camera/microphone hardware, screen sharing capability. His WiFi shows intermittent drops — the system warns: "Your network connection is unstable. We recommend switching to a wired connection or moving closer to your router." Kofi switches to ethernet, re-runs the check — all green. He proceeds through the honour code, ID verification (OCR confirms his name and ID in seconds), face capture (face detection validates a single clear face), and starts the assessment confidently. The experience is accessible — keyboard navigable, proper contrast ratios, screen-reader compatible. He completes the assessment stress-free, knowing the system validated his setup before he started. No false violations, no lost submissions, no manual review required.
+
+**Capabilities Revealed:** System compatibility check (browser, OS, network, hardware), accessibility (WCAG 2.1 AA), reduced assessment rejection rate, candidate confidence
+
+---
 
 ### Journey 3: Ama — Candidate (Adaptive Coding Assessment)
 
@@ -139,6 +153,21 @@ Ama starts the coding assessment. The first question is Intermediate-level Pytho
 
 **Capabilities Revealed:** Adaptive difficulty scaling, multi-file project coding, auto-grading with test cases, AI code review, skill-level profiling
 
+---
+
+### Journey 4: Kwame — Organization Admin (Setup & Governance)
+
+**Situation:** Kwame is the Organization Admin for AmaliTech's Recruitment unit. He manages 15 test managers, configures roles and permissions, and ensures assessment quality across the org.
+
+**Today's Journey:**
+Kwame logs in, navigates to User Management, invites new test managers with appropriate roles, configures organization settings. When a test manager creates a questionable question, he has no systematic way to review quality. Questions pile up with no lifecycle management — stale questions sit alongside active ones. When another org creates a great question set, there's no way to share it.
+
+**Q2 Transformed Journey:**
+Kwame's workflow gains governance tools. He configures question archiving rules — questions unused for 6 months get flagged for review; archived questions are excluded from active test pools but retain full audit history. He enables global questions — marking high-quality questions as reusable across designated orgs, governed by permission rules. When the Training Center creates excellent Python questions, Kwame can pull them into Recruitment's pool without duplication. He monitors the AI-generated question review workflow — ensuring every AI-proposed question passes human review before entering the active bank. Question versioning gives him audit trails for compliance: who changed what, when, and why, with rollback capability.
+
+**Capabilities Revealed:** Question archiving, global questions across orgs, question governance, version audit trails, AI review workflow oversight
+
+---
 
 ### Journey 5: Yaa — System Admin (Platform Operations)
 
@@ -152,6 +181,21 @@ With the pre-test compatibility check, Yaa sees a dramatic drop in technical sup
 
 **Capabilities Revealed:** Compatibility check monitoring, reduced support escalations, global question governance, feature flag rollout, platform-wide quality monitoring
 
+---
+
+### Journey 6: External API Consumer (Programmatic Integration)
+
+**Situation:** AmaliTech's internal CMS team needs to programmatically trigger assessments for new hires, pull candidate results into their HR dashboard, and sync skill-level data with the training pipeline.
+
+**Today's Journey:**
+The CMS team registers an API account, generates API keys via the External API Integration service, and makes REST calls to dispatch assessments and retrieve results. They authenticate via x-api-key header, hitting endpoints through the API Gateway.
+
+**Q2 Transformed Journey:**
+The API surface expands. The CMS team can now query candidate skill profiles generated by adaptive testing — not just pass/fail scores, but granular skill-level breakdowns (e.g., "Python Algorithms: Expert, System Design: Beginner"). They receive webhook callbacks when assessments complete, with richer payload data including auto-graded coding results, AI analysis summaries, and compatibility check outcomes. The integration enables an automated pipeline: new hire to assessment dispatch to adaptive evaluation to skill profile to targeted training assignment — all without manual intervention.
+
+**Capabilities Revealed:** Enhanced API payloads with skill profiles, webhook enrichment, automated assessment-to-training pipeline
+
+---
 
 ### Journey Requirements Summary
 

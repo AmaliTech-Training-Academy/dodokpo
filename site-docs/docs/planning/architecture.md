@@ -1,4 +1,3 @@
-
 # Architecture Decision Document — Dodokpo Assessment Platform
 
 _Brownfield architecture decisions for the existing Dodokpo platform and Q2 2026 enhancements._

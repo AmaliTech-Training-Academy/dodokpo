@@ -8,6 +8,84 @@ The platform supports the full assessment lifecycle: user and organization manag
 
 Key architectural decisions include AES-encrypted JWT payloads for inter-service trust, a circuit-breaker pattern at the gateway layer, and a polyglot technology stack spanning Node.js (Express/NestJS), Java (Spring Boot), and Python (FastAPI) services, each chosen to match its workload profile.
 
+---
+
+## 2. Architecture Pattern
+
+### 2.1 High-Level Topology
+
+```mermaid
+graph TB
+    subgraph Clients
+        C[Clients<br/>Web / Mobile / External API]
+    end
+
+    subgraph Core["Core Tier"]
+        GW[API Gateway<br/>Express.js :8001]
+        AUTH[Authentication<br/>NestJS 10]
+        UM[User Management<br/>Express.js]
+    end
+
+    subgraph Assessment["Assessment Tier"]
+        TC[Test Creation<br/>Express.js]
+        TE[Test Execution<br/>Express.js 5]
+        TCM[Test Cases Management<br/>NestJS 11 / Lambda]
+    end
+
+    subgraph Support["Support Tier"]
+        RPT[Reporting<br/>Spring Boot 3]
+        AI[AI Service<br/>FastAPI]
+        NTF[Notification<br/>Express.js]
+        EXT[External API Integration<br/>NestJS 10]
+    end
+
+    subgraph Shared["Shared Package"]
+        FFC[feature-flag-client<br/>Node.js library]
+    end
+
+    C --> GW
+    GW --> AUTH
+    GW --> UM
+    GW --> TC
+    GW --> TE
+    GW --> RPT
+    GW --> NTF
+    GW --> EXT
+
+    AUTH <-->|Kafka| UM
+    AUTH -->|Kafka| NTF
+    UM -->|Kafka| NTF
+    UM -->|Kafka| TC
+    TE -->|HTTP| AI
+    TE -->|Kafka| RPT
+    TE -->|HTTP| TCM
+    TC -->|HTTP| TCM
+    RPT -->|HTTP| AI
+    RPT -->|HTTP webhooks| EXT
+    TE -->|Kafka| NTF
+
+    FFC -.->|consumed by| GW
+    FFC -.->|consumed by| AUTH
+    FFC -.->|consumed by| UM
+    FFC -.->|consumed by| TC
+    FFC -.->|consumed by| TE
+    FFC -.->|consumed by| NTF
+    FFC -.->|consumed by| EXT
+```
+
+### 2.2 Architectural Principles
+
+| Principle | Implementation |
+|---|---|
+| **Single Responsibility** | Each service owns one bounded context |
+| **Database per Service** | No shared databases; data flows through events or API calls |
+| **API Gateway Pattern** | All external traffic enters through one secured endpoint |
+| **Event-Driven Communication** | Kafka for asynchronous cross-service workflows |
+| **Defense in Depth** | Encrypted JWT payloads, rate limiting, circuit breaking, CORS, Helmet |
+| **Polyglot Persistence** | PostgreSQL, DynamoDB, Redis, and S3 selected per workload |
+| **Smart Endpoints, Dumb Pipes** | Business logic lives in services, not in the message broker |
+
+---
 
 ## 3. Service Descriptions
 
@@ -180,6 +258,59 @@ A shared Node.js package consumed by all Express.js and NestJS services. Provide
 - **FlagCache:** In-memory store for feature flag state, updated via Kafka events propagated through the API Gateway.
 - **featureFlagGuard:** Express middleware that gates route access based on active feature flags.
 
+---
+
+## 4. Technology Stack
+
+### 4.1 Languages and Frameworks
+
+| Service | Language | Framework | Runtime |
+|---|---|---|---|
+| API Gateway | TypeScript/JavaScript | Express.js | Node.js |
+| Authentication | TypeScript | NestJS 10 | Node.js |
+| User Management | TypeScript/JavaScript | Express.js | Node.js |
+| Test Creation | TypeScript/JavaScript | Express.js | Node.js |
+| Test Execution | TypeScript/JavaScript | Express.js 5 | Node.js |
+| Test Cases Management | TypeScript | NestJS 11 | AWS Lambda (Node.js 22) |
+| Reporting | Java 21 | Spring Boot 3.1.4 | JVM |
+| AI | Python 3.12+ | FastAPI | Python / AWS Lambda |
+| Notification | TypeScript/JavaScript | Express.js | Node.js |
+| External API Integration | TypeScript | NestJS 10 | Node.js |
+
+### 4.2 Data Stores
+
+| Technology | Used By | Purpose |
+|---|---|---|
+| PostgreSQL | Auth, User Mgmt, Test Creation, Test Execution, Notification, External API | Primary relational storage |
+| DynamoDB | Reporting, AI, Test Cases Mgmt | NoSQL for flexible/serverless workloads |
+| Redis | Reporting, External API Integration | Caching layer |
+| AWS S3 | User Mgmt, Test Cases Mgmt | Object/file storage |
+| AWS CloudFront | User Mgmt | CDN for profile images |
+
+### 4.3 Infrastructure and Messaging
+
+| Technology | Purpose |
+|---|---|
+| Apache Kafka | Asynchronous event-driven communication |
+| BullMQ | Job queues (Test Creation service) |
+| Judge0 API | Sandboxed code execution |
+| AWS Lambda | Serverless compute (Test Cases Mgmt, AI background jobs) |
+| Jenkins | CI/CD with smart change detection |
+| Docker | Service containerization |
+| Prometheus | Metrics collection |
+| OpenTelemetry + Jaeger | Distributed tracing |
+| Sentry | Error tracking and alerting |
+
+### 4.4 ORMs and Database Access
+
+| ORM/Client | Services |
+|---|---|
+| Prisma | Authentication, Test Creation, Test Execution, Notification, External API Integration |
+| Sequelize | User Management |
+| Spring Data DynamoDB | Reporting |
+| Boto3 / AWS SDK | AI, Test Cases Management |
+
+---
 
 ## 5. Data Architecture
 
@@ -272,6 +403,84 @@ Test Creation               Test Execution              Reporting               
      |                            |                        |       (external)    |
 ```
 
+---
+
+## 6. Authentication and Authorization
+
+### 6.1 JWT Lifecycle
+
+```
+Client                 API Gateway                 Auth Service          Downstream Service
+  |                        |                            |                       |
+  |-- login request ------>|                            |                       |
+  |                        |-- forward ----------------->|                       |
+  |                        |<-- JWT (encrypted payload) -|                       |
+  |<-- JWT token ----------|                            |                       |
+  |                        |                            |                       |
+  |-- API request + JWT -->|                            |                       |
+  |                        |-- validate JWT             |                       |
+  |                        |-- decrypt payload          |                       |
+  |                        |-- re-sign + re-encrypt     |                       |
+  |                        |-- proxy with new JWT -------------------------------->|
+  |                        |                            |                       |
+  |<-- response -----------|<-------------------------------------------------------|
+```
+
+### 6.1.1 Authentication Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant GW as API Gateway
+    participant Auth as Auth Service
+    participant UM as User Management
+
+    Client->>GW: POST /login (credentials)
+    GW->>Auth: Forward login request
+    Auth->>UM: Lookup user (Kafka / internal)
+    UM-->>Auth: User record + roles & permissions
+    Auth->>Auth: Validate credentials
+    Auth->>Auth: Generate JWT (AES-encrypted payload)
+    Auth-->>GW: JWT token
+    GW->>GW: Validate JWT
+    GW->>GW: Decrypt payload, re-sign & re-encrypt
+    GW-->>Client: JWT token (gateway-signed)
+
+    Note over Client,GW: Subsequent API requests
+    Client->>GW: API request + JWT
+    GW->>GW: Validate & re-sign JWT
+    GW->>Auth: Proxy with new JWT
+    Auth-->>GW: Response
+    GW-->>Client: Response
+```
+
+### 6.2 Token Security
+
+| Mechanism | Detail |
+|---|---|
+| **Payload Encryption** | AES encryption of JWT payload content using a shared `JWT_ENCRYPTION_KEY` and `JWT_ENCRYPTION_ALGO` across all services |
+| **Gateway Re-signing** | The API Gateway decrypts, validates, and re-signs tokens before forwarding, preventing token replay across service boundaries |
+| **Token Storage** | AuthToken model tracks active sessions; UnauthorizeRequest model handles revocation |
+| **Temporal Blocking** | Accounts can be temporarily blocked; a cron job (every 60 seconds) auto-unblocks when the block period expires |
+
+### 6.3 Permission Model
+
+The platform implements a hierarchical RBAC model with 48 granular permissions managed by the User Management service:
+
+- **Users** are assigned to **Roles** within **Organizations**.
+- **Roles** aggregate **Permissions** that govern specific actions.
+- Multi-organization support allows a single user to hold different roles in different organizations.
+- Permission checks occur at both the API Gateway level (coarse-grained, via JWT claims) and at individual service endpoints (fine-grained).
+
+### 6.4 External API Authentication
+
+The External API Integration service uses a separate authentication scheme based on API keys:
+
+- Keys are hashed using **PBKDF2** before storage.
+- On first access, an integration account is auto-provisioned.
+- Key validation results are cached in **Redis** to reduce database lookups.
+
+---
 
 ## 7. Event-Driven Architecture (Kafka)
 
@@ -411,6 +620,42 @@ User Mgmt                    Authentication                Test Creation
 
 *(Notification service consumes 26 topics encompassing all of the above and additional domain-specific events.)*
 
+---
+
+## 8. Observability
+
+### 8.1 Tracing
+
+All services are instrumented with **OpenTelemetry** and export traces to a **Jaeger** backend. Trace context is propagated through HTTP headers (W3C Trace Context) and Kafka message headers, enabling end-to-end request tracing across synchronous and asynchronous boundaries.
+
+### 8.2 Metrics
+
+The API Gateway exposes a **Prometheus** metrics endpoint covering:
+
+- Request rate, latency histograms, and error rates per downstream service
+- Circuit breaker state transitions (closed, open, half-open)
+- Rate limiter rejection counts
+- Active SSE connections for feature flag broadcasting
+
+### 8.3 Error Tracking
+
+**Sentry** is integrated across all services for real-time error capture, deduplication, and alerting. Each service reports errors with contextual metadata including:
+
+- Service name and version
+- Trace ID for correlation with Jaeger
+- User context (where available and non-sensitive)
+- Request/response metadata
+
+### 8.4 Observability Stack Summary
+
+| Layer | Tool | Scope |
+|---|---|---|
+| Distributed Tracing | OpenTelemetry + Jaeger | All services |
+| Metrics | Prometheus | API Gateway (primary), extensible to all |
+| Error Tracking | Sentry | All services |
+| Logging | Service-native (structured JSON) | All services |
+
+---
 
 ## 9. Resilience and Traffic Management
 
@@ -495,6 +740,28 @@ The AI service employs an 8-stage JSON repair pipeline to handle malformed LLM r
 7. Schema validation
 8. Fallback to partial extraction
 
+---
+
+## 10. CI/CD Pipeline
+
+### 10.1 Jenkins Pipeline
+
+The monorepo uses **Jenkins** with **smart change detection** to optimize build times:
+
+- On each push, the pipeline determines which services have changed by analyzing Git diffs against the previous successful build.
+- Only affected services are built, tested, and deployed.
+- Shared package changes (e.g., `feature-flag-client`) trigger rebuilds of all dependent services.
+
+### 10.2 Deployment Strategy
+
+| Component | Deployment Target |
+|---|---|
+| Node.js services (7) | Container orchestration platform |
+| Spring Boot (Reporting) | Container orchestration platform |
+| FastAPI (AI) | Container orchestration platform + AWS Lambda |
+| NestJS Serverless (Test Cases Mgmt) | AWS Lambda |
+
+---
 
 ## 11. Testing Strategy
 
@@ -529,6 +796,23 @@ The AI service employs an 8-stage JSON repair pipeline to handle malformed LLM r
 - **External service mocking:** Judge0, OpenAI, Gemini, and S3 calls are mocked in unit/integration tests; real integrations are validated in staging.
 - **Smart test selection:** Jenkins runs only tests belonging to changed services, mirroring the build-level change detection.
 
+---
+
+## 12. Service Communication Matrix
+
+| From \ To | Auth | User Mgmt | Test Creation | Test Exec | Reporting | AI | Notification | Test Cases | Ext API |
+|---|---|---|---|---|---|---|---|---|---|
+| **API Gateway** | HTTP | HTTP | HTTP | HTTP | HTTP | -- | HTTP | -- | HTTP |
+| **Auth** | -- | Kafka | -- | -- | -- | -- | Kafka | -- | -- |
+| **User Mgmt** | Kafka | -- | Kafka | -- | -- | -- | Kafka | -- | -- |
+| **Test Creation** | -- | -- | -- | -- | -- | -- | Kafka | HTTP | -- |
+| **Test Exec** | -- | -- | -- | -- | Kafka | HTTP | Kafka | HTTP | -- |
+| **Reporting** | -- | -- | -- | -- | -- | HTTP | -- | -- | HTTP (webhooks) |
+| **Notification** | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+
+**Legend:** HTTP = synchronous request, Kafka = asynchronous event, -- = no direct communication.
+
+---
 
 ## 13. Port Allocation
 
@@ -547,3 +831,17 @@ The AI service employs an 8-stage JSON repair pipeline to handle malformed LLM r
 
 *All internal services are accessed exclusively through the API Gateway. Direct external access is not permitted.*
 
+---
+
+## 14. Security Summary
+
+| Layer | Mechanism |
+|---|---|
+| **Transport** | HTTPS/TLS termination at load balancer |
+| **API Gateway** | Helmet headers, CORS, rate limiting, circuit breaker |
+| **Authentication** | AES-encrypted JWT payloads, PBKDF2 API key hashing |
+| **Authorization** | 48-permission RBAC model, per-organization role assignment |
+| **Data at Rest** | PostgreSQL encryption, DynamoDB encryption, S3 server-side encryption |
+| **Secrets Management** | Environment-variable-based injection, shared encryption keys |
+| **Proctoring** | Device fingerprint validation, window violation detection, screenshot capture |
+| **Observability** | Sentry alerting, Jaeger trace correlation for incident investigation |

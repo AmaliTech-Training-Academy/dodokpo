@@ -67,7 +67,6 @@ nav:
     - Deployment Guide: project/deployment-guide.md
   - Planning Artifacts:
     - PRD: planning/prd.md
-    - PRD Validation: planning/prd-validation-report.md
     - Architecture Decisions: planning/architecture.md
     - Epics & Stories: planning/epics.md
     - Sprint Plan: planning/sprint-plan.md

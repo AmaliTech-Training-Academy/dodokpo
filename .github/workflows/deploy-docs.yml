@@ -36,17 +36,35 @@ jobs:
 
       - name: Sync docs to site-docs
         run: |
-          # Copy project docs (strip YAML frontmatter)
-          for f in docs/*.md; do
-            fname=$(basename "$f")
-            sed '/^---$/,/^---$/d' "$f" > "site-docs/docs/project/$fname"
-          done
+          # Strip only YAML frontmatter (first --- block), preserve all other --- in content
+          python3 << 'PYEOF'
+          import os, glob
 
-          # Copy planning artifacts (strip YAML frontmatter)
-          for f in _bmad-output/planning-artifacts/*.md; do
-            fname=$(basename "$f")
-            sed '/^---$/,/^---$/d' "$f" > "site-docs/docs/planning/$fname"
-          done
+          def strip_frontmatter(content):
+              if content.startswith('---'):
+                  end = content.find('---', 3)
+                  if end != -1:
+                      return content[end+3:].lstrip('\n')
+              return content
+
+          # Project docs
+          for f in glob.glob('docs/*.md'):
+              fname = os.path.basename(f)
+              with open(f) as fh:
+                  content = strip_frontmatter(fh.read())
+              with open(f'site-docs/docs/project/{fname}', 'w') as out:
+                  out.write(content)
+
+          # Planning artifacts (exclude validation report)
+          for f in glob.glob('_bmad-output/planning-artifacts/*.md'):
+              fname = os.path.basename(f)
+              if 'validation' in fname:
+                  continue
+              with open(f) as fh:
+                  content = strip_frontmatter(fh.read())
+              with open(f'site-docs/docs/planning/{fname}', 'w') as out:
+                  out.write(content)
+          PYEOF
 
       - name: Build MkDocs site
         run: cd site-docs && mkdocs build

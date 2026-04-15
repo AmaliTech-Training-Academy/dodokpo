@@ -2,6 +2,95 @@
 
 Complete inventory of all UI components in the Dodokpo Angular frontend application, organized by feature area.
 
+---
+
+## Shared / Reusable Components (`components/`)
+
+### Layout & Navigation
+
+| Component Name | Purpose |
+|---|---|
+| NavbarComponent | Top-level application navigation bar |
+| SideBarComponent | Main sidebar navigation panel |
+| SidebarCollapseComponent | Collapsible sidebar toggle control |
+
+### Feedback & Overlays
+
+| Component Name | Purpose |
+|---|---|
+| CustomToastComponent | Toast notification messages |
+| CustomModalComponent | Standard modal dialog |
+| CustomMiniModalComponent | Compact modal dialog for lightweight prompts |
+
+### Form Controls
+
+| Component Name | Purpose |
+|---|---|
+| CustomInputComponent | Reusable text input field |
+| CustomTextareaComponent | Multi-line text area input |
+| CustomTextEditorComponent | Rich text editor powered by Quill |
+| CustomDropdownComponent | Dropdown select control |
+| CustomButtonComponent | Styled button component |
+| CustomCheckBoxComponent | Checkbox input control |
+| CustomSearchInputComponent | Search input with built-in filtering behavior |
+| EmailChipInputComponent | Email entry field with chip/tag display |
+| ToggleSwitchComponent | Boolean toggle switch control |
+
+### Data Display
+
+| Component Name | Purpose |
+|---|---|
+| CustomTableComponent | Standard data table |
+| EditableTableComponent | Table with inline editing capabilities |
+| CustomPaginationComponent | Pagination control for data lists |
+| CustomGraphComponent | Line/bar graph visualization using Chart.js |
+| CustomDoughnutChartComponent | Doughnut chart visualization |
+| CustomStackedBarGraphComponent | Stacked bar graph visualization |
+| CircleProgressComponent | Circular progress indicator |
+| BadgeComponent | Status or count badge label |
+| CardWrapperComponent | Generic card container |
+| GridViewComponent | Grid layout display for items |
+| ListViewComponent | List layout display for items |
+
+### Utilities & Interactions
+
+| Component Name | Purpose |
+|---|---|
+| StepperComponent | Multi-step workflow progress indicator |
+| TooltipComponent | Contextual tooltip popover |
+| ThemeToggleComponent | Light/dark theme switcher |
+| LoadingProgressComponent | Determinate loading progress bar |
+| RefreshLoaderComponent | Refresh/reload spinner indicator |
+| DodokpoLoaderComponent | Branded full-page loading animation |
+| LottieAnimationComponent | Lottie JSON animation renderer |
+
+### Bulk Operations & Data Upload
+
+| Component Name | Purpose |
+|---|---|
+| BulkCsvUploadComponent | CSV file upload with parsing support |
+| PreviewDataComponent | Preview uploaded/imported data before confirmation |
+| CodeEditorComponent | Code editor powered by Monaco Editor |
+
+### Action & Context Controls
+
+| Component Name | Purpose |
+|---|---|
+| ActionButtonComponent | Contextual action trigger button |
+| ActionItemsPopUpComponent | Pop-up list of available actions for an item |
+| AddTagModalComponent | Modal for adding tags to entities |
+| BasicButtonDropdownComponent | Button with dropdown menu |
+| ExpandableInstructionCardComponent | Collapsible card with instructional content |
+
+### Placeholder & Error Pages
+
+| Component Name | Purpose |
+|---|---|
+| ReroutePageComponent | Redirect/reroute intermediate page |
+| NoResultFoundComponent | Empty state when no results match a query |
+| NotFoundPageComponent | 404 not-found page |
+
+---
 
 ## Question Options Components
 
@@ -14,6 +103,22 @@ Complete inventory of all UI components in the Dodokpo Angular frontend applicat
 | MatrixOptionsComponent | Renders matrix-style answer options |
 | AnswerOptionsComponent | Generic answer option display wrapper |
 
+---
+
+## SVG Icon Components
+
+| Component Name | Purpose |
+|---|---|
+| AiSparkleSvgComponent | AI sparkle icon |
+| AlarmSvgComponent | Alarm/timer icon |
+| DispatchSvgComponent | Dispatch/send icon |
+| FileSvgComponent | File document icon |
+| FolderIconSvgComponent | Folder icon |
+| InsightSvgComponent | Insight/analytics icon |
+| RequiredSvgComponent | Required field indicator icon |
+| UserWithPadlockComponent | User with security padlock icon |
+
+---
 
 ## Authentication
 
@@ -49,6 +154,23 @@ Complete inventory of all UI components in the Dodokpo Angular frontend applicat
 | PasswordFormLayoutComponent | Layout wrapper for password-related forms |
 | PasswordStrengthMeterComponent | Visual indicator of password strength |
 
+---
+
+## Dashboard
+
+| Component Name | Purpose |
+|---|---|
+| DashboardHomePageComponent | Main dashboard landing page |
+| DashboardCardComponent | Summary metric card on the dashboard |
+| DashboardNavbarComponent | Dashboard-specific navigation bar |
+| DashboardSmallCardComponent | Compact metric card variant |
+| MainAppComponent | Root application shell with sidebar and content area |
+| DomainAdminDashboardComponent | Dashboard view for domain administrators |
+| RecruitersDashboardComponent | Dashboard view for recruiters |
+| ReportsManagerDashboardComponent | Dashboard view for report managers |
+| ReportDashboardCardComponent | Report-specific summary card |
+
+---
 
 ## Report Management
 
@@ -107,6 +229,52 @@ Complete inventory of all UI components in the Dodokpo Angular frontend applicat
 | StatsCardComponent | Compact statistics card |
 | StatusBadgeComponent | Status indicator badge (pass/fail/pending) |
 
+---
+
+## Test Management -- Questions
+
+### Top-Level Pages
+
+| Component Name | Purpose |
+|---|---|
+| AllQuestionsComponent | Question bank listing page |
+| MainQuestionsPageComponent | Main container for question management |
+| EditQuestionsComponent | Question editing page |
+| BulkQuestionUploadComponent | Bulk upload of questions via CSV/file |
+| BasicQuestionContainerComponent | Shared container for question creation forms |
+| QuestionTitleComponent | Question title input and display |
+| LayoutWrapperComponent | Layout wrapper for question pages |
+
+### Question Type Creation
+
+| Component Name | Purpose |
+|---|---|
+| MultiChoiceQuestionsComponent | Create multiple-choice questions |
+| MultiSelectQuestionsComponent | Create multi-select questions |
+| TrueOrFalseQuestionsComponent | Create true/false questions |
+| EssayQuestionsComponent | Create essay questions |
+| AddRubricEssayQuestionComponent | Add grading rubric to essay questions |
+| MatrixQuestionsComponent | Create matrix-type questions |
+| AddColumnAndRowInformationComponent | Define columns and rows for matrix questions |
+| MatrixTableComponent | Matrix question table layout |
+| FillInTheBlanksQuestionsComponent | Create fill-in-the-blank questions |
+| CodingQuestionsComponent | Create coding questions |
+| CodingParentComponent | Parent container for coding question setup |
+| PreviewCodingQuestionsComponent | Preview coding questions with test cases |
+| TestCaseRowComponent | Individual test case row for coding questions |
+
+### Question Type Editing
+
+| Component Name | Purpose |
+|---|---|
+| EditMultiChoiceQuestionComponent | Edit existing multiple-choice questions |
+| EditMultiSelectQuestionComponent | Edit existing multi-select questions |
+| EditTrueOrFalseComponent | Edit existing true/false questions |
+| EditEssayQuestionComponent | Edit existing essay questions |
+| EditMatrixQuestionComponent | Edit existing matrix questions |
+| EditFillInTheBlanksComponent | Edit existing fill-in-the-blank questions |
+
+---
 
 ## Test Management -- Tests
 
@@ -126,6 +294,24 @@ Complete inventory of all UI components in the Dodokpo Angular frontend applicat
 | ComprehensionQuestionTileComponent | Tile display for comprehension questions |
 | AddToTestComponent | Add questions to an existing test |
 
+---
+
+## Test Management -- Assessments
+
+| Component Name | Purpose |
+|---|---|
+| AssessmentsComponent | Assessments module root/container |
+| MainAssessmentComponent | Main assessment management page |
+| CreateAssessmentComponent | Assessment creation wizard |
+| BasicAndConfigComponent | Assessment basic information and configuration |
+| SelectTestPageComponent | Select tests to include in an assessment |
+| AssessmemtPreviewCreationComponent | Preview assessment before creation |
+| DispatchAssessmentComponent | Dispatch/send assessment to candidates |
+| AssessmentPreviewComponent | Read-only assessment preview |
+| AssessmentHistoryComponent | Assessment dispatch and status history |
+| AssessmentHistoryCardComponent | Individual history entry card |
+
+---
 
 ## Test Management -- Domains
 
@@ -135,6 +321,24 @@ Complete inventory of all UI components in the Dodokpo Angular frontend applicat
 | AllDomainsComponent | Domain listing page |
 | CreateDomainComponent | Create a new domain |
 
+---
+
+## Test Management -- Skills
+
+| Component Name | Purpose |
+|---|---|
+| SkillsComponent | Skills module root/container |
+| AllSkillsComponent | Skills listing page |
+| CreateSkillComponent | Create a new skill |
+| BasicInformationComponent | Skill basic information form |
+| AssessmentAssignmentPageComponent | Assign assessments to a skill |
+| AssessmentPageWithLevelsComponent | Assessment assignment with proficiency levels |
+| AssessmentPageWithNoLevelComponent | Assessment assignment without proficiency levels |
+| PreviewSkillsWithAssessmentComponent | Preview skill with assigned assessments |
+| CreateLevelComponent | Create proficiency level for a skill |
+| BulkSkillsUploadComponent | Bulk upload skills via CSV/file |
+
+---
 
 ## Test-Taker Flow
 
@@ -157,6 +361,17 @@ Complete inventory of all UI components in the Dodokpo Angular frontend applicat
 | RetakeDelayNotDueComponent | Page shown when retake delay period has not elapsed |
 | RetakeMaximumAttemptComponent | Page shown when maximum retake attempts are reached |
 
+---
+
+## Test-Taking
+
+| Component Name | Purpose |
+|---|---|
+| TestTakingComponent | Test-taking module root/container |
+| TestTakingMainPageComponent | Main test-taking interface with questions and timer |
+| WaitingPageComponent | Waiting/loading page during test transitions |
+
+---
 
 ## User Management
 
@@ -171,6 +386,20 @@ Complete inventory of all UI components in the Dodokpo Angular frontend applicat
 | RoleDetailsComponent | Detailed role configuration and permissions |
 | ApplicationsComponent | Application management page |
 
+---
+
+## Workspace / Settings
+
+| Component Name | Purpose |
+|---|---|
+| UpdateUserProfileComponent | User profile update form |
+| WorkspaceConfigurationComponent | Workspace-level configuration settings |
+| OrganizationSettingsComponent | Organization settings management |
+| ApiSettingsComponent | API key and integration settings |
+| TestSourceCheckboxComponent | Checkbox control for toggling test sources |
+| UserInputComponent | User input field for settings forms |
+
+---
 
 ## Other
 
@@ -182,6 +411,19 @@ Complete inventory of all UI components in the Dodokpo Angular frontend applicat
 | NotificationsComponent | Notifications management page |
 | NotificationsDropDownComponent | Notification dropdown in the navbar |
 
+---
+
+## Pipes
+
+| Pipe Name | Purpose |
+|---|---|
+| DisplayValuePipe | Formats raw values for display |
+| FilterNullPipe | Filters out null/undefined values from collections |
+| SearchPipe | Filters collections based on a search term |
+| TimeAgoPipe | Converts timestamps to relative time strings (e.g., "5 minutes ago") |
+| TruncateLongTextPipe | Truncates long text with ellipsis |
+
+---
 
 ## Web Workers
 

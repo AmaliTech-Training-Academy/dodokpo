@@ -24,7 +24,6 @@ Technical documentation generated from an exhaustive codebase scan.
 Product planning documents for Q2 2026.
 
 - [Product Requirements Document](planning/prd.md) — 72 FRs, 27 NFRs, user journeys, domain requirements
-- [PRD Validation Report](planning/prd-validation-report.md) — BMAD standards validation
 - [Architecture Decisions](planning/architecture.md) — Q2 architectural decisions, patterns, structure
 - [Epics & Stories](planning/epics.md) — 10 epics, 40 stories with acceptance criteria
 - [Sprint Plan](planning/sprint-plan.md) — 5-sprint plan across Team Alpha + Team Delta

@@ -1126,37 +1126,37 @@ The following timeline spans 6 sprints (12 weeks) aligned with Q2 2026.
 
 ```mermaid
 gantt
-    title Dodokpo Q2 2026 -- Sprint-by-Sprint Implementation
+    title Dodokpo Q2 2026 Sprint Timeline
     dateFormat YYYY-MM-DD
     axisFormat %b %d
 
     section Team A
-    S1: E1 - Question Versioning (1.1, 1.2)           :a1, 2026-04-20, 14d
-    S2: E1 - Archiving, Global (1.3, 1.4)             :a2, after a1, 14d
-    S2: E2 - Schema + Bloom's (2.1, 2.2)              :a2b, after a1, 14d
-    S3: E2 - Override, Distribution (2.3, 2.4)         :a3, after a2, 14d
-    S3: E3 - Duplicate Detection (3.1, 3.2)            :a3b, after a2, 14d
-    S4: E2 - Intelligent Select, Preview (2.5, 2.6)    :a4, after a3, 14d
-    S4: E3 - AI Gen Trigger + Review (3.3, 3.4)        :a4b, after a3, 14d
-    S5: E3 - AI Approve/Reject (3.5)                   :a5, after a4, 14d
-    S5: E4 - Bulk Upload (4.1, 4.2)                    :a5b, after a4, 14d
-    S5: E7 - Calibration Score (7.1)                   :a5c, after a4, 14d
-    S6: E7 - Under-calibrated Flagging (7.2)           :a6, after a5, 14d
-    S6: E9A - Reporting + Webhooks (9.5-9.9)           :a6b, after a5, 14d
+    E1 Versioning Schema and Diff           :a1, 2026-04-20, 14d
+    E1 Archiving and Global Questions       :a2, after a1, 14d
+    E2 Difficulty Schema and Blooms         :a2b, after a1, 14d
+    E2 Override and Distribution            :a3, after a2, 14d
+    E3 Duplicate Detection                  :a3b, after a2, 14d
+    E2 Intelligent Select and Preview       :a4, after a3, 14d
+    E3 AI Gen Trigger and Review            :a4b, after a3, 14d
+    E3 AI Approve Reject                    :a5, after a4, 14d
+    E4 Bulk Upload                          :a5b, after a4, 14d
+    E7 Calibration Score                    :a5c, after a4, 14d
+    E7 Under-calibrated Flagging            :a6, after a5, 14d
+    E9 Reporting and Webhooks               :a6b, after a5, 14d
 
     section Team B
-    S1: E5 - Multi-File Editor (5.1, 5.2)              :b1, 2026-04-20, 14d
-    S1: E8 - Browser/OS Check (8.1)                    :b1b, 2026-04-20, 14d
-    S2: E5 - Judge0 Multi-File (5.3)                   :b2, after b1, 14d
-    S2: E8 - Network/Hardware Check (8.2)              :b2b, after b1, 14d
-    S3: E6 - Auto-Grading + Logs (6.1, 6.2)           :b3, after b2, 14d
-    S3: E8 - Compat Analytics (8.3, 8.4)               :b3b, after b2, 14d
-    S4: E6 - Test Case Mgmt + AI Review (6.3, 6.4)    :b4, after b3, 14d
-    S4: E8 - Proctoring + Results (8.5, 8.6)           :b4b, after b3, 14d
-    S5: E9B - Assessment CRUD, Tags (9.1-9.4)          :b5, after b4, 14d
-    S5: E9B - Notifications, Flags (9.10, 9.11)        :b5b, after b4, 14d
-    S6: E10 - Adaptive Engine (10.1, 10.2)             :b6, after b5, 14d
-    S6: E10 - Config + API (10.3, 10.4)                :b6b, after b5, 14d
+    E5 Multi-File Editor                    :b1, 2026-04-20, 14d
+    E8 Browser and OS Check                 :b1b, 2026-04-20, 14d
+    E5 Judge0 Multi-File                    :b2, after b1, 14d
+    E8 Network and Hardware Check           :b2b, after b1, 14d
+    E6 Auto-Grading and Logs                :b3, after b2, 14d
+    E8 Compat Analytics                     :b3b, after b2, 14d
+    E6 Test Case Mgmt and AI Review         :b4, after b3, 14d
+    E8 Proctoring and Results               :b4b, after b3, 14d
+    E9 Assessment CRUD and Tags             :b5, after b4, 14d
+    E9 Notifications and Flags              :b5b, after b4, 14d
+    E10 Adaptive Engine                     :b6, after b5, 14d
+    E10 Config and API                      :b6b, after b5, 14d
 ```
 
 ### Sprint Summary Table

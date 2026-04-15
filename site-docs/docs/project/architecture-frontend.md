@@ -13,6 +13,37 @@
 9. [Theming & Design System](#9-theming--design-system)
 10. [Testing Strategy](#10-testing-strategy)
 
+---
+
+## 1. Executive Summary
+
+The Dodokpo Assessment Platform frontend is an **Angular 20** application organized as an **Nx monorepo** (`frontend/`) with a **Webpack Module Federation** architecture. It ships two applications -- `dodokpo-core` (the host shell) and `dodokpo-next` (a federated remote) -- plus a shared library workspace under `libs/shared`.
+
+The platform serves two distinct user populations with fundamentally different security models:
+
+- **Organization administrators and recruiters** access a full dashboard for managing domains, questions, tests, assessments, skills, reports, users, roles, and feature flags.
+- **Test-taker candidates** follow a guided assessment pipeline that includes identity verification (OCR via tesseract.js), face capture (face-api.js), real-time proctoring (webcam + screen monitoring), and a timed exam experience with coding support (Monaco Editor + Judge0).
+
+Key technology choices:
+
+| Concern | Technology |
+|---|---|
+| Framework | Angular 20.3.x (standalone components, no NgModules) |
+| Monorepo | Nx with manual `run-nx-no-plugins.mjs` wrapper |
+| Module Federation | `@nx/module-federation/angular` (Webpack 5) |
+| State Management | NgRx ComponentStore (7 stores, all `providedIn: 'root'`) |
+| UI Libraries | Angular Material (M2), PrimeNG, TailwindCSS (class-based dark mode) |
+| HTTP | Angular HttpClient (interceptors) + Axios (guards only) |
+| Real-time | Server-Sent Events (notifications, feature flags, analytics streaming) |
+| Code Editor | Monaco Editor (conditional preload on coding routes) |
+| Analytics | Segment (`@segment/analytics-next`) |
+| Error Tracking | Sentry (`@sentry/angular`) |
+| Testing | Jest + jest-preset-angular (353 spec files, 80% line coverage threshold) |
+| Code Quality | ESLint, SonarQube, Husky + lint-staged + commitlint |
+
+The codebase contains **253 components**, **353 test files**, **612 lines of permission definitions** across 48 access groups, and **80+ CSS custom properties** powering light/dark theming.
+
+---
 
 ## 2. Module Federation Architecture
 
@@ -135,6 +166,187 @@ Angular core, common, and router are configured as strict singletons to prevent 
 
 Both apps are built independently (`npm run build` runs `nx run-many -t build --all --parallel=1`) and served from the same nginx instance. The host dynamically loads the remote entry from `/next/remoteEntry.mjs` at runtime.
 
+---
+
+## 3. Routing Architecture
+
+### 3.1 Top-Level Route Map
+
+All routes use lazy-loaded standalone components. No NgModules are used in routing (the only `NgModule` in the codebase is the `FeatureModule` in `dodokpo-next` for MF compatibility).
+
+```
+/                           -> LoginPageComponent
+/login                      -> LoginPageComponent
+/change-password            -> ChangePasswordComponent      [authLinkValidationGuard]
+/create-password            -> CreatePasswordComponent      [authLinkValidationGuard]
+/forgot-password            -> ForgotPasswordComponent
+/reset-link-sent            -> ResetLinkSentComponent
+/organizations-list         -> UserOrganizationListComponent [organizationListGuard]
+/dashboard/...              -> mainAppRoutes (lazy)
+/test-taker/...             -> testTakerRoutes (lazy)
+/test-taking/...            -> testTakingRoutes (lazy)       [testTakingPhaseGuard]
+/invalid-link               -> InvalidLinkPageComponent
+/link-expired               -> LinkExpiredPageComponent
+/link-used                  -> LinkUsedPageComponent
+/unauthorized               -> UnauthorizedComponent
+/please-wait                -> ReroutePageComponent
+/next/...                   -> dodokpo-next remote routes    [preload: true]
+/**                         -> NotFoundPageComponent
+```
+
+```mermaid
+flowchart TD
+    Root["/ (Root)"]
+
+    Root --> Login["/login<br/>LoginPageComponent"]
+    Root --> CP["/create-password<br/>authLinkValidationGuard"]
+    Root --> FP["/forgot-password<br/>ForgotPasswordComponent"]
+    Root --> OL["/organizations-list<br/>organizationListGuard"]
+
+    Root --> Dashboard["/dashboard/**<br/>🔒 authGuard"]
+    Root --> TestTaker["/test-taker/**<br/>🔒 testTakerGuard"]
+    Root --> TestTaking["/test-taking/**<br/>🔒 testTakingPhaseGuard"]
+    Root --> Next["/next/**<br/>Module Federation Remote"]
+
+    Dashboard --> DHome["/home"]
+    Dashboard --> DTM["/test-management"]
+    Dashboard --> DRM["/report-management"]
+    Dashboard --> DUM["/user-management"]
+    Dashboard --> DWC["/workspace-configuration"]
+    Dashboard --> DN["/notifications"]
+    Dashboard --> DA["/archives"]
+    Dashboard --> DFF["/feature-flags"]
+
+    TestTaker --> TEmail["/enter-email"]
+    TEmail --> TSI["/system-instruction"]
+    TSI --> THC["/honour-code"]
+    THC --> TMC["/media-consent"]
+    TMC --> TID["/interception<br/>ID Verification"]
+    TID --> TFC["/interception/face-capture"]
+    TFC --> TAI["/interception/assessment-instructions"]
+    TAI --> TWU["/warm-up"]
+    TWU --> TSP["/step-page"]
+
+    TestTaking --> TEP["/exams-phase<br/>TestTakingMainPageComponent"]
+    TestTaking --> TWP["/waiting-page<br/>WaitingPageComponent"]
+
+    style Dashboard fill:#e3f2fd,stroke:#1565c0
+    style TestTaker fill:#fff3e0,stroke:#e65100
+    style TestTaking fill:#fce4ec,stroke:#c62828
+    style Next fill:#e8f5e9,stroke:#2e7d32
+```
+
+### 3.2 Dashboard Routes (authGuard)
+
+The dashboard shell (`MainAppComponent`) wraps all authenticated admin routes:
+
+```
+/dashboard/home                         -> DashboardHomePageComponent
+/dashboard/report-management/...        -> reportManagementRoutes    [preload]
+/dashboard/test-management/...          -> testManagementRoutes      [preload]
+/dashboard/user-management/...          -> userManagementRoutes      [preload]
+/dashboard/update-profile               -> UpdateUserProfileComponent
+/dashboard/workspace-configuration/...  -> workspaceConfigRoutes
+/dashboard/notifications                -> NotificationsComponent
+/dashboard/feature-flags                -> FeatureFlagsComponent
+/dashboard/archives/...                 -> archivesRoutes
+```
+
+### 3.3 Test Management Routes
+
+```
+/dashboard/test-management/
+  domain/...         -> domainRoutes         [preload]
+  questions/...      -> questionsRoutes      [preload]
+  tests/...          -> testsRoutes          [preload]
+  assessments/...    -> assessmentRoutes     [preload]
+  skills/...         -> skillsRoutes         [preload]
+```
+
+Each sub-area supports full CRUD. Questions support 7 types with bulk upload. Tests use a 4-step wizard (regular + comprehension). Assessments use a 3-step wizard with dispatch and history views. Skills use a 3-step wizard with bulk upload.
+
+### 3.4 Report Management Routes
+
+```
+/dashboard/report-management/
+  dispatched-assessments/            -> ReportDispatchedAssessmentsComponent
+  dispatched-assessments/download    -> ReportDownloadComponent
+  candidates-report/                 -> CandidatesReportComponent
+  candidates-report/:candidateEmail  -> CandidateReportDetailsComponent
+  assessment-candidates/:id/         -> ReportAssessmentCandidatesComponent
+  assessment-candidates/:id/question-analytics  -> questionAnalyticsRoutes
+  assessment-candidates/:id/candidate-metrics   -> candidateMetricsRoutes
+  feedback/:assessmentId             -> FeedbackComponent
+```
+
+Report routes include breadcrumb metadata and support nested navigation with parent breadcrumbs (e.g., "Dispatched Assessments > Assessment Candidates").
+
+### 3.5 User Management Routes
+
+```
+/dashboard/user-management/
+  users           -> UsersComponent
+  organisations   -> OrganisationsComponent
+  roles/          -> RolesComponent
+  roles/create-new-role  -> CreateNewRoleComponent
+  roles/role-details     -> RoleDetailsComponent
+  roles/role-details/:id -> RoleDetailsComponent
+  applications    -> ApplicationsComponent
+```
+
+### 3.6 Test-Taker Pipeline Routes
+
+The test-taker flow is a guided pipeline with route-level side panel configuration via `data`:
+
+```
+/test-taker/
+  enter-email                          -> EnterEmailComponent
+  system-instruction                   -> SystemInstructionsComponent       [testTakerGuard]
+  honour-code                          -> HonorCodePageComponent            [testTakerGuard]
+  media-consent                        -> MediaConsentComponent             [testTakerGuard]
+  interception                         -> InterceptionWithIdComponent       [testTakerGuard]
+  interception/face-capture            -> FaceCaptureComponent              [testTakerGuard]
+  interception/assessment-instructions -> AssessmentInstructionsComponent   [testTakerGuard]
+  warm-up                              -> FirstWarmUpPageComponent          [testTakerGuard]
+  step-page                            -> StepPageComponent                 [testTakingPhaseGuard]
+  assessment-completed                 -> CompletePageComponent
+  assessment-results                   -> AssessmentResultsComponent
+  feedback                             -> FeedbackPageComponent
+  assessment-not-due                   -> AssessmentNotDueComponent
+  retake-delay-not-due                 -> RetakeDelayNotDueComponent
+  retake-maximum-attempt               -> RetakeMaximumAttemptComponent
+```
+
+Each route carries `data` properties controlling the sidebar layout:
+- `sideImg`: path to the illustration SVG
+- `sideStyle`: CSS class for the side panel
+- `sidePadding`: inline padding value
+- `showSideBar`: boolean to toggle the left panel
+
+### 3.7 Test-Taking Routes
+
+```
+/test-taking/
+  exams-phase     -> TestTakingMainPageComponent   [testTakingPhaseGuard]
+  waiting-page    -> WaitingPageComponent           [testTakingPhaseGuard]
+```
+
+### 3.8 Selective Preloading Strategy
+
+The application uses a custom `SelectivePreloadingStrategy` instead of Angular's `PreloadAllModules`:
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class SelectivePreloadingStrategy implements PreloadingStrategy {
+  preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {
+    return route.data?.['preload'] ? load() : of(null);
+  }
+}
+```
+
+Only routes annotated with `data: { preload: true }` are preloaded. This covers the core dashboard sub-areas (test-management, report-management, user-management) and the `dodokpo-next` remote, while deferring less-visited routes like workspace configuration and update-profile.
+
+---
 
 ## 4. State Management
 
@@ -272,6 +484,119 @@ provideStoreDevtools({
 })
 ```
 
+---
+
+## 5. Service Layer
+
+### 5.1 Service Organization
+
+Services are split across two locations:
+
+- **App-local services** (`apps/dodokpo-core/src/app/services/`): 20+ services specific to the core application.
+- **Shared library services** (`libs/shared/services/src/`): 13 re-exported services shared between `dodokpo-core` and `dodokpo-next`.
+
+All services use `@Injectable({ providedIn: 'root' })` for tree-shakeable singleton registration.
+
+### 5.2 Shared Services (via `@shared/services`)
+
+| Export | Description |
+|---|---|
+| `ToastService` | Notification toasts with title, message, auto-close, severity |
+| `AuthService` | Login/logout, token management, fingerprinting, multi-org |
+| `ThemeService` | Light/dark mode toggling with feature flag awareness |
+| `FeatureFlagService` | HTTP + SSE real-time feature flags with admin CRUD |
+| `ProctoringService` | Webcam/screen monitoring, screenshot capture, tab detection |
+| `AnalyticsService` | Segment integration, SSE-streamed question analytics + AI insights |
+| `BreadcrumbService` | Dynamic breadcrumb management from route data |
+| `NotificationsService` | SSE real-time push notifications with sound |
+| `SentryService` | Error tracking via `@sentry/angular` |
+| `FaceDetectionService` | face-api.js TinyFaceDetector for face verification |
+| `TestTakingService` | Test-taker session state, assessment data, tracking |
+| `AiHealthCheckService` | AI service availability monitoring |
+
+### 5.3 App-Local Services (notable)
+
+| Service | Responsibility |
+|---|---|
+| `CodeExecutionService` | Judge0 integration for running code, generating test cases, boilerplate, and solutions via AI |
+| `MonacoLoaderService` | Dynamic script loading and configuration of Monaco Editor |
+| `IdVerificationService` | Tesseract.js OCR with PDF support, field extraction, confidence scoring |
+| `FileParseWorkerService` | Web Worker delegation for CSV/file parsing |
+| `PermissionsService` | RBAC permission checks against 48 access groups |
+| `DomainService` | Domain CRUD operations |
+| `NavigationService` | Programmatic navigation helpers |
+| `ResponsiveService` | Viewport breakpoint detection |
+| `ReloadService` | Route reload state management (for the "please wait" interstitial) |
+| `DropdownManagerService` | Shared dropdown state coordination |
+| `EditorService` | Rich text editor (Quill) configuration |
+| `Html2PdfService` | PDF generation from HTML (html2pdf.js + jspdf) |
+| `SidebarService` | Sidebar open/close state |
+| `DashboardService` | Dashboard home page data |
+
+### 5.4 App Initializers
+
+Three `provideAppInitializer` functions run before the application renders:
+
+1. **Sentry TraceService** -- Initializes Sentry performance tracing on the Router.
+2. **Feature Flag Initializer** -- Fetches public feature flags via HTTP and populates the `FeatureFlagService`. This always resolves (never blocks bootstrap) since `publicListFlags()` handles its own errors internally.
+3. **Monaco Preload Initializer** -- Conditionally preloads Monaco Editor only when the initial route (or subsequent navigation) matches coding-related paths (`/test-taking`, `/test-taker`, `/dashboard/test-management/questions`, `/dashboard/test-management/tests`). Uses a `NavigationEnd` listener with `take(1)` to trigger preload on first navigation to a coding route.
+
+```mermaid
+sequenceDiagram
+    participant B as Angular Bootstrap
+    participant S as Sentry TraceService
+    participant FF as featureFlagInitializer
+    participant FFS as FeatureFlagService
+    participant M as monacoPreloadFactory
+    participant ML as MonacoLoaderService
+    participant R as Router
+    participant App as App Renders
+
+    Note over B,App: provideAppInitializer sequence
+
+    B->>S: 1. Initialize Sentry TraceService
+    S->>R: Attach performance tracing to Router
+    S-->>B: Sentry ready
+
+    B->>FF: 2. featureFlagInitializer
+    FF->>FFS: publicListFlags() via HTTP
+    FFS-->>FF: Public feature flags loaded
+    Note over FF: Always resolves (never blocks bootstrap)
+    FF-->>B: Feature flags ready
+
+    B->>M: 3. monacoPreloadFactory
+    M->>R: Subscribe to NavigationEnd (take 1)
+
+    alt Route matches coding path
+        Note over M: /test-taking, /test-taker,<br/>/dashboard/test-management/questions,<br/>/dashboard/test-management/tests
+        M->>ML: Preload Monaco Editor scripts
+        ML-->>M: Monaco preloaded
+    else Route does not match
+        Note over M: Skip Monaco preload
+    end
+
+    M-->>B: Monaco init complete
+
+    B->>App: All initializers resolved → Render application
+```
+
+### 5.5 Real-Time Communication (SSE)
+
+Three services maintain persistent SSE connections:
+
+| Service | SSE Endpoint | Purpose |
+|---|---|---|
+| `FeatureFlagService` | `/api/v1/flag-admin/flags/sse` | Real-time flag toggles, creates, deletes |
+| `NotificationsService` | `${environment.eventUrl}/${token}` | Push notifications with unread count |
+| `AnalyticsService` | `/test-taking/assessment/:id/questions-analysis-stream` | Streamed question analytics + AI insights |
+
+All three implement:
+- Retry logic with configurable max retries (3) and 5-second backoff
+- Concurrent connection prevention (`isConnecting` flag)
+- Proper cleanup in `ngOnDestroy`
+- Sentry reporting on persistent failures
+
+---
 
 ## 6. Authentication & Security
 
@@ -477,6 +802,105 @@ interface AccessGroup {
 
 48 access groups are defined (612 lines), covering every UI action from viewing the dashboard to archiving individual questions. The `checkPermission()` function matches a user's permission array against an access group, checking both new and legacy permission names.
 
+---
+
+## 7. Proctoring Pipeline
+
+### 7.1 Pipeline Overview
+
+The proctoring system monitors test-takers during assessments through three parallel channels:
+
+```mermaid
+flowchart TD
+    Start([Test-Taker Begins]) --> Email["/enter-email<br/>Enter assessment email"]
+    Email --> SI["/system-instruction<br/>System Instructions"]
+    SI --> HC["/honour-code<br/>Honour Code Agreement"]
+    HC --> MC["/media-consent<br/>Media Consent<br/>(camera + screen)"]
+    MC --> IDV["/interception<br/>ID Verification<br/>📷 tesseract.js OCR"]
+    IDV --> FC["/interception/face-capture<br/>Face Capture<br/>🧠 face-api.js detection"]
+    FC --> AI["/interception/assessment-instructions<br/>Assessment Instructions"]
+    AI --> WU["/warm-up<br/>Warm Up Exercise"]
+    WU --> TT["/test-taking/exams-phase<br/>🎯 Active Test Taking"]
+
+    subgraph "Proctoring During Test"
+        direction TB
+        WM["📹 Webcam Monitoring<br/>getUserMedia()<br/>periodic face detection<br/>→ S3 upload"]
+        SC["🖥️ Screenshot Capture<br/>getDisplayMedia()<br/>canvas → PNG → MD5<br/>→ presigned S3 URL → PUT"]
+        TD["🔄 Tab-Switch Detection<br/>visibilitychange event<br/>1s debounce + 2s minimum<br/>+ false-positive filters"]
+    end
+
+    TT --- WM & SC & TD
+
+    IDV -- "OCR Pipeline" --> OCR["Image preprocessing (max 1000px)<br/>→ tesseract.js worker (English)<br/>→ Field extraction (name, ID, DOB)<br/>→ Confidence scoring (≥60 to pass)<br/>→ 20s hard timeout"]
+
+    FC -- "Face Pipeline" --> FD["TinyFaceDetector (416×416)<br/>+ FaceLandmark68Net<br/>→ Score threshold 0.6<br/>→ Reject 0 or >1 faces<br/>→ Quality: face area >10K px²"]
+
+    style TT fill:#c8e6c9,stroke:#2e7d32
+    style WM fill:#bbdefb,stroke:#1565c0
+    style SC fill:#bbdefb,stroke:#1565c0
+    style TD fill:#bbdefb,stroke:#1565c0
+    style OCR fill:#fff9c4,stroke:#f9a825
+    style FD fill:#fff9c4,stroke:#f9a825
+```
+
+### 7.2 Screen Sharing (ProctoringService)
+
+Screen sharing uses `navigator.mediaDevices.getDisplayMedia()` with Safari-specific handling:
+
+- Safari does not support the `displaySurface` constraint; the service conditionally omits it
+- Detects window/tab sharing (vs. full screen) by inspecting the video track label for browser-specific keywords (`window`, `tab`, `chrome`, `mozilla`, `edge`)
+- Shows a warning toast if window/tab sharing is detected instead of full screen
+- Handles share cancellation vs. permission denial separately (only logs actual errors)
+- Re-share modal triggered when the track's `onended` fires
+- `muted` and `playsInline` attributes set for Safari autoplay compliance
+
+### 7.3 Tab/Window Switching Detection
+
+Tab switching detection uses the `visibilitychange` event with multiple false-positive protections:
+
+1. **1-second debounce**: Violations only register after the tab has been hidden for 1 second
+2. **2-second minimum duration**: Only violations lasting 2+ seconds are finalized
+3. **Genuine violation check** excludes:
+   - Active modals, dropdowns, overlays, tooltips, dialogs (`role="dialog"`, SweetAlert, etc.)
+   - Document still has focus (browser UI interaction like address bar)
+   - Active input elements or Monaco editor focus
+   - Document not actually hidden
+   - CDK drag-and-drop in progress
+   - Divider resize operations
+
+### 7.4 Screenshot Upload Pipeline
+
+1. **Capture**: Creates an off-screen `<video>` element from the MediaStream, draws to canvas, exports as PNG data URL
+2. **MD5 computation**: Calculates Content-MD5 hash using CryptoJS for S3 integrity verification
+3. **Presigned URL**: Requests a pre-signed S3 upload URL from the backend (`/test-taking/assessment/:id/presigned-url`)
+4. **S3 upload**: Direct PUT to S3 using Axios with the presigned URL and required headers (Content-Type, Content-MD5, object lock mode/retention)
+5. **Internet check**: Silently skips upload when offline (`isInternetAvailable()`)
+
+Image types are categorized: `id-shot`, `head-shot`, `screen-monitoring`, `candidate-monitoring`.
+
+### 7.5 Face Detection (FaceDetectionService)
+
+Uses **face-api.js** with lazy-loaded models:
+
+- **Models**: TinyFaceDetector (416x416 input) + FaceLandmark68Net, loaded from `/assets/models`
+- **Lazy loading**: The `face-api.js` module itself is dynamically imported on first use
+- **Detection parameters**: Score threshold 0.6, input size 416
+- **Results**: Face count, confidence score, bounding box, face quality assessment (`good` if face area > 10,000 px^2)
+- **Validation**: Rejects zero faces and multiple faces
+
+### 7.6 ID Verification (IdVerificationService)
+
+Uses **tesseract.js** for OCR with lazy loading (saves ~14.9MB from initial bundle):
+
+1. **Image preprocessing**: Resizes to max 1000px dimension before OCR
+2. **Worker setup**: Creates a tesseract worker with English language data from `/assets/tesseract`
+3. **Timeout protection**: 20-second hard timeout with worker termination
+4. **Field extraction**: Regex patterns for name, surname, ID number, date of birth, nationality, sex, expiry date, etc. Supporting English, French, and Swahili label variants
+5. **Confidence scoring**: Based on keyword matches (40pts for 2+), name detection (40pts), ID number (20pts), date of birth (10pts)
+6. **Validation**: Requires name + ID number + 2 keywords + confidence >= 60 for `isValid: true`
+7. **PDF support**: Single-page PDFs are rendered to canvas at 2x scale via `pdfjs-dist`, then OCR'd
+
+---
 
 ## 8. UI Component Architecture
 
@@ -566,6 +990,141 @@ Two Web Workers handle CPU-intensive file parsing off the main thread:
 - **`csv.worker.ts`**: Parses CSV files for bulk question/skill uploads
 - **`file-parse.worker.ts`**: General file parsing delegated from `FileParseWorkerService`
 
+---
+
+## 9. Theming & Design System
+
+### 9.1 Theme Architecture
+
+The theming system operates across three layers:
+
+```
+Layer 1: Angular Material (M2)
+  - Indigo primary palette
+  - Pink accent palette (A200/A100/A400)
+  - Red warn palette
+  - M2 light theme with default typography and density 0
+
+Layer 2: CSS Custom Properties (80+ variables)
+  - :root defines light theme defaults
+  - .dark class overrides all variables for dark mode
+  - Consumed by Tailwind (via theme.extend.colors) and direct CSS
+
+Layer 3: TailwindCSS
+  - darkMode: 'class' (toggled by ThemeService)
+  - Colors mapped to CSS custom properties
+  - Utility classes for layout, typography, responsive
+```
+
+```mermaid
+block-beta
+    columns 1
+    block:L3["Layer 3: TailwindCSS"]:1
+        TW1["darkMode: 'class'"]
+        TW2["Colors mapped to CSS vars:<br/>bg → var(--color-bg)<br/>text → var(--color-text)<br/>primary → var(--color-primary)"]
+        TW3["Utility classes for layout,<br/>typography, responsive"]
+    end
+    block:L2["Layer 2: CSS Custom Properties (80+ vars)"]:1
+        L2A[":root — light theme defaults"]
+        L2B[".dark — dark mode overrides"]
+        L2C["Consumed by Tailwind & direct CSS"]
+    end
+    block:L1["Layer 1: Angular Material M2"]:1
+        M1["Indigo primary palette"]
+        M2["Pink accent (A200/A100/A400)"]
+        M3["Red warn palette"]
+        M4["Default typography, density 0"]
+    end
+
+    style L3 fill:#e8f5e9,stroke:#2e7d32
+    style L2 fill:#e3f2fd,stroke:#1565c0
+    style L1 fill:#fce4ec,stroke:#c62828
+```
+
+```mermaid
+flowchart LR
+    TS["ThemeService<br/>BehaviorSubject&lt;'light' | 'dark'&gt;"]
+    TS -- "toggleTheme()" --> HTML["&lt;html&gt; element"]
+    HTML -- "add/remove class" --> DC[".dark class<br/>(Tailwind + CSS vars)"]
+    HTML -- "add/remove class" --> TC["light-theme / dark-theme"]
+    HTML -- "set attribute" --> DT["data-theme on &lt;body&gt;"]
+    TS -- "localStorage['theme']" --> LS[("localStorage")]
+    TS -- "getMonacoTheme()" --> MO["Monaco: 'vs' | 'codeQuestionDark'"]
+
+    FF["Feature Flag:<br/>use_system_default_theme_082379"]
+    OS["OS prefers-color-scheme"]
+    FF -. "if enabled + no saved theme" .-> OS
+    OS -. "initial theme" .-> TS
+
+    style TS fill:#e8eaf6,stroke:#3949ab
+```
+
+### 9.2 ThemeService
+
+The `ThemeService` manages theme state as an observable `BehaviorSubject<'light' | 'dark'>`:
+
+```typescript
+toggleTheme():
+  1. Flip 'light' <-> 'dark'
+  2. Update BehaviorSubject
+  3. Persist to localStorage['theme']
+  4. Apply CSS classes to <html>:
+     - Remove 'light-theme' / 'dark-theme'
+     - Add new theme class
+     - Add/remove 'dark' class (for Tailwind)
+     - Set data-theme attribute on <body>
+```
+
+**Feature flag integration**: On initialization, if no saved theme exists, the service checks the `use_system_default_theme_082379` feature flag. If enabled, it respects the OS `prefers-color-scheme` media query.
+
+**Monaco integration**: `getMonacoTheme()` returns `'vs'` for light mode and `'codeQuestionDark'` for dark mode (a custom theme defined in `MonacoLoaderService`).
+
+### 9.3 CSS Custom Properties
+
+The `:root` scope defines 80+ custom properties organized by component type:
+
+| Category | Example Variables |
+|---|---|
+| **Brand** | `--color-brand-orange`, `--color-brand-dark-blue`, `--color-brand-dark-blue-hover` |
+| **Semantic** | `--color-danger`, `--color-success`, `--color-warning`, `--color-gray` |
+| **Surface** | `--color-bg`, `--color-text`, `--color-surface`, `--color-muted`, `--color-input` |
+| **Cards** | `--card-bg`, `--card-title`, `--card-text`, `--card-border` |
+| **Question cards** | `--questions-card-bg`, `--questions-card-border`, `--questions-card-pill-*` |
+| **Long cards** | `--long-card-bg`, `--long-card-chip-*` |
+| **Assessment cards** | `--assessment-card-bg`, `--assessment-card-footer-bg` |
+| **Tables** | `--table-header-bg`, `--table-header-text`, `--table-header-hover-bg` |
+| **Navigation** | `--sidebar-active`, `--side-bar-bg`, `--side-bar-border` |
+| **Search** | `--search-bg`, `--search-text` |
+
+The `.dark` class overrides every variable. Notable dark mode transformations:
+- `--color-white` becomes `#21211f` (dark surface)
+- `--color-bg` becomes `#1a1a18` (near-black background)
+- `--color-primary` shifts from `#0c4767` to `#559fe0` (lighter blue for contrast)
+- `--color-brand` becomes `#ffffff` (inverted for readability)
+
+### 9.4 Typography
+
+The primary font stack is `'Segoe UI', sans-serif` with `Work Sans` loaded from Google Fonts as a supplementary typeface. The `color-scheme: light` CSS property is set on `:root`.
+
+Custom fonts are loaded from `apps/dodokpo-core/src/assets/fonts/fonts.css`.
+
+### 9.5 Tailwind Integration
+
+Tailwind configuration maps semantic color names to CSS custom properties:
+
+```javascript
+colors: {
+  bg: 'var(--color-bg)',
+  text: 'var(--color-text)',
+  surface: 'var(--color-surface)',
+  primary: 'var(--color-primary)',
+  // ... 15+ semantic mappings
+}
+```
+
+This means `class="bg-primary text-text"` resolves to the correct colors in both light and dark mode without any Tailwind dark: prefix -- the CSS variables handle the switch.
+
+---
 
 ## 10. Testing Strategy
 
