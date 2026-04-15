@@ -74,11 +74,20 @@
   cursor: default;
 }
 
-.mermaid-fullscreen-content svg {
-  width: 92vw !important;
-  height: auto !important;
-  max-height: 85vh;
+.mermaid-fullscreen-content {
   background: var(--md-default-bg-color, #fff);
   border-radius: 8px;
   padding: 24px;
+  width: 94vw;
+  height: 84vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mermaid-fullscreen-content svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
 }
