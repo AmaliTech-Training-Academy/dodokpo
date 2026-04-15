@@ -57,8 +57,8 @@ extra_css:
   - assets/css/brand.css
 
 extra_javascript:
-  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
   - assets/js/mermaid-init.js
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
   - assets/js/mermaid-fullscreen.js
 
 nav:
