@@ -1,0 +1,73 @@
+site_name: Dodokpo Assessment Platform
+site_url: https://amalitech-training-academy.github.io/dodokpo/
+repo_url: https://github.com/AmaliTech-Training-Academy/dodokpo
+repo_name: AmaliTech-Training-Academy/dodokpo
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+
+nav:
+  - Home: index.md
+  - Project Documentation:
+    - Overview: project/project-overview.md
+    - Backend Architecture: project/architecture-backend.md
+    - Frontend Architecture: project/architecture-frontend.md
+    - Integration Architecture: project/integration-architecture.md
+    - API Contracts: project/api-contracts-backend.md
+    - Data Models: project/data-models-backend.md
+    - Component Inventory: project/component-inventory-frontend.md
+    - Source Tree: project/source-tree-analysis.md
+    - Development Guide: project/development-guide.md
+    - Deployment Guide: project/deployment-guide.md
+  - Planning Artifacts:
+    - PRD: planning/prd.md
+    - PRD Validation: planning/prd-validation-report.md
+    - Architecture Decisions: planning/architecture.md
+    - Epics & Stories: planning/epics.md
+    - Sprint Plan: planning/sprint-plan.md

@@ -1,0 +1,61 @@
+{
+  "repository_type": "multi-part",
+  "parts": [
+    {
+      "part_id": "backend",
+      "display_name": "Backend Microservices Monorepo",
+      "project_type_id": "backend",
+      "root_path": "backend/",
+      "repository_type": "monorepo",
+      "primary_language": "TypeScript",
+      "secondary_languages": ["Java", "Python"],
+      "frameworks": ["Express.js", "NestJS", "Spring Boot", "FastAPI"],
+      "databases": ["PostgreSQL", "Redis", "DynamoDB"],
+      "messaging": ["Kafka"],
+      "services": [
+        {"name": "api-gateway", "framework": "Express.js", "port": 8001},
+        {"name": "authentication", "framework": "NestJS 10", "database": "PostgreSQL (Prisma)"},
+        {"name": "user-management", "framework": "Express.js", "database": "PostgreSQL (Sequelize)"},
+        {"name": "test-creation", "framework": "Express.js", "database": "PostgreSQL (Prisma)"},
+        {"name": "test-execution", "framework": "Express.js 5", "database": "PostgreSQL (Prisma)"},
+        {"name": "test-cases-management", "framework": "NestJS 11", "database": "DynamoDB + S3", "runtime": "AWS Lambda"},
+        {"name": "reporting", "framework": "Spring Boot 3.1.4", "database": "DynamoDB", "language": "Java 21"},
+        {"name": "ai", "framework": "FastAPI", "database": "DynamoDB", "language": "Python 3.12+", "runtime": "AWS Lambda"},
+        {"name": "notification", "framework": "Express.js", "database": "PostgreSQL (Prisma)"},
+        {"name": "external-api-integration", "framework": "NestJS 10", "database": "PostgreSQL (Prisma)"}
+      ],
+      "shared_packages": [
+        {"name": "@dodokpo/feature-flag-client", "path": "packages/feature-flag-client/"}
+      ]
+    },
+    {
+      "part_id": "frontend",
+      "display_name": "Angular Nx Frontend Monorepo",
+      "project_type_id": "web",
+      "root_path": "frontend/",
+      "repository_type": "monorepo",
+      "primary_language": "TypeScript",
+      "framework": "Angular 20",
+      "build_system": "Nx 22 + Webpack + Module Federation",
+      "ui_libraries": ["Angular Material", "PrimeNG", "TailwindCSS"],
+      "state_management": "NgRx Component Store",
+      "apps": [
+        {"name": "dodokpo-core", "role": "Module Federation Host", "port": 4200},
+        {"name": "dodokpo-next", "role": "Module Federation Remote", "port": 4201}
+      ],
+      "libs": [
+        {"name": "shared", "exports": ["config", "services", "interfaces", "directives", "styles", "utils"]}
+      ]
+    }
+  ],
+  "integration_points": [
+    {"from": "frontend", "to": "api-gateway", "type": "HTTPS", "details": "All frontend traffic proxied through API Gateway"},
+    {"from": "api-gateway", "to": "all backend services", "type": "HTTP Proxy", "details": "http-proxy-middleware with circuit breaker"},
+    {"from": "authentication", "to": "user-management", "type": "HTTP", "details": "User info lookups during login"},
+    {"from": "test-execution", "to": "ai", "type": "HTTP", "details": "Essay marking, question analytics"},
+    {"from": "test-execution", "to": "test-cases-management", "type": "HTTP", "details": "Fetch code test cases"},
+    {"from": "test-execution", "to": "Judge0", "type": "HTTP", "details": "Code execution engine"},
+    {"from": "reporting", "to": "ai", "type": "HTTP", "details": "Candidate performance analysis"},
+    {"from": "all backend services", "to": "Kafka", "type": "Pub/Sub", "details": "40+ topics for user lifecycle, assessment events, notifications"}
+  ]
+}
