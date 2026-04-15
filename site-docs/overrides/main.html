@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<script>
+// Strip <code> wrappers from superfences mermaid blocks
+// Runs synchronously in <head> so it executes before any deferred scripts
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('pre.mermaid code').forEach(function(code) {
+    var pre = code.parentElement;
+    pre.textContent = code.textContent;
+  });
+});
+</script>
+{% endblock %}
