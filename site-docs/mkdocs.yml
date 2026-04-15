@@ -62,16 +62,16 @@ nav:
       - Frontend: project/architecture-frontend.md
       - Integration: project/integration-architecture.md
     - API & Data:
-      - API Contracts: project/api-contracts-backend.md
-      - Data Models: project/data-models-backend.md
+      - Endpoints: project/api-contracts-backend.md
+      - Models: project/data-models-backend.md
     - UI & Structure:
       - Components: project/component-inventory-frontend.md
       - Source Tree: project/source-tree-analysis.md
     - Operations:
       - Dev Guide: project/development-guide.md
       - Deploy Guide: project/deployment-guide.md
-  - Planning:
+  - Project Management:
     - PRD: planning/prd.md
-    - Architecture: planning/architecture.md
     - Epics & Stories: planning/epics.md
     - Sprint Plan: planning/sprint-plan.md
+    - Architecture Decisions: planning/architecture.md

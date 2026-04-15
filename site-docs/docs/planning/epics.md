@@ -6,201 +6,7 @@
 
 ---
 
-## 1. Requirements Inventory
-
-### 1.1 Functional Requirements (72 FRs)
-
-| ID | Description | Capability Area |
-|----|-------------|-----------------|
-| FR1 | Classify questions using difficulty tier + Bloom's Taxonomy | Question Bank Intelligence |
-| FR2 | Continuously recalibrate difficulty tiers from assessment results | Question Bank Intelligence |
-| FR3 | Compute difficulty scores from pass/fail rates, time-to-answer, score distributions | Question Bank Intelligence |
-| FR4 | Test managers assign/override Bloom's Taxonomy levels per question | Question Bank Intelligence |
-| FR5 | Test managers view/override system-assigned difficulty tiers (tracked in version history) | Question Bank Intelligence |
-| FR6 | Flag questions with insufficient performance data for calibration review | Question Bank Intelligence |
-| FR7 | Specify question distribution by difficulty tier, Bloom's level, or combination | Question Bank Intelligence |
-| FR8 | Randomly select questions from matching classified pools | Question Bank Intelligence |
-| FR9 | Ensure no candidate receives the same question set | Question Bank Intelligence |
-| FR10 | Preview difficulty and Bloom's distribution of assembled test before dispatch | Question Bank Intelligence |
-| FR11 | Trigger AI-assisted question generation by domain, difficulty, Bloom's level, count | Question Bank Intelligence |
-| FR12 | AI-generated questions enter human review workflow before active bank | Question Bank Intelligence |
-| FR13 | Review, approve, edit, or reject AI-generated questions | Question Bank Intelligence |
-| FR14 | Detect and flag near-duplicate questions with similarity score before publish | Question Bank Intelligence |
-| FR15 | Prevent publishing questions exceeding configurable similarity threshold | Question Bank Intelligence |
-| FR16 | Version all question edits with full history and rollback | Question Bank Intelligence |
-| FR17 | Compare any two versions of a question side-by-side | Question Bank Intelligence |
-| FR18 | Archive questions, excluding from active pools while retaining audit history | Question Bank Intelligence |
-| FR19 | Mark questions as global, reusable across designated organizations | Question Bank Intelligence |
-| FR20 | Bulk upload coding questions via CSV/JSON template with validation | Question Bank Intelligence |
-| FR21 | Report bulk upload progress, success/failure counts, downloadable error details | Question Bank Intelligence |
-| FR22 | Create, configure, and dispatch assessments with proctor levels, duration, pass marks | Assessment Creation & Dispatch |
-| FR23 | Dispatch assessments via email, generic link, or bulk batch | Assessment Creation & Dispatch |
-| FR24 | Add, manage, and filter assessments by tags | Assessment Creation & Dispatch |
-| FR25 | View assessment dispatch history and recall active dispatches | Assessment Creation & Dispatch |
-| FR26 | Write and execute code in multi-file project-style IDE during assessments | Coding Assessment Engine |
-| FR27 | Auto-grade coding submissions using public and hidden test cases with limits | Coding Assessment Engine |
-| FR28 | Display clear pass/fail logs per test case with execution time and memory | Coding Assessment Engine |
-| FR29 | Support JavaScript, TypeScript, Python, and Java for code execution | Coding Assessment Engine |
-| FR30 | Define public test cases (visible) and hidden test cases (grading only) | Coding Assessment Engine |
-| FR31 | Enforce resource constraints (time limit, memory limit) per test case | Coding Assessment Engine |
-| FR32 | AI reviews candidate code for quality, patterns, and best practices | Coding Assessment Engine |
-| FR33 | Run pre-test compatibility check (browser, OS, network, camera, mic, screen sharing) | Candidate Experience & Proctoring |
-| FR34 | Provide clear remediation guidance when compatibility issues detected | Candidate Experience & Proctoring |
-| FR35 | Re-run compatibility check after resolving issues | Candidate Experience & Proctoring |
-| FR36 | ID verification via document OCR with confidence scoring | Candidate Experience & Proctoring |
-| FR37 | Face capture verification via face detection with quality validation | Candidate Experience & Proctoring |
-| FR38 | Monitor candidates via webcam capture, screenshot capture, tab-switching detection | Candidate Experience & Proctoring |
-| FR39 | Distinguish genuine violations from false positives (debounce, min-duration thresholds) | Candidate Experience & Proctoring |
-| FR40 | Candidates view assessment results after completion (when configured) | Candidate Experience & Proctoring |
-| FR41 | Track and report compatibility check pass/fail rates per browser, OS, network | Candidate Experience & Proctoring |
-| FR42 | Track assessment rejection rates from technical issues, surface trends to admins | Candidate Experience & Proctoring |
-| FR43 | Dynamically adjust question difficulty based on candidate performance | Adaptive Testing |
-| FR44 | Increase difficulty for subsequent questions on correct answers | Adaptive Testing |
-| FR45 | Decrease difficulty for subsequent questions on incorrect answers | Adaptive Testing |
-| FR46 | Generate skill-level profiles from adaptive assessment results | Adaptive Testing |
-| FR47 | Enable/disable adaptive mode per assessment | Adaptive Testing |
-| FR48 | Invite, activate, deactivate, delete users with RBAC (48 permissions) | User & Org Management |
-| FR49 | Create custom roles with specific permission combinations | User & Org Management |
-| FR50 | Users belong to multiple organizations and switch between them | User & Org Management |
-| FR51 | Create, activate, deactivate, remove organizations | User & Org Management |
-| FR52 | Review and approve/reject new organization applications | User & Org Management |
-| FR53 | Create skills with hierarchical levels, assign assessments to each level | Skills Management |
-| FR54 | Dispatch assessments via skill-level assignment | Skills Management |
-| FR55 | Bulk upload skills via CSV | Skills Management |
-| FR56 | Map skills to external systems for CMS integration | Skills Management |
-| FR57 | View assessment reports with candidate metrics, comparative analysis, score distributions | Reporting & Analytics |
-| FR58 | AI-powered candidate performance analysis and question analytics | Reporting & Analytics |
-| FR59 | View proctoring data (screenshots, webcam captures, violation logs) per candidate | Reporting & Analytics |
-| FR60 | Stream AI analytics insights in real-time | Reporting & Analytics |
-| FR61 | Webhook callbacks to external systems with enriched assessment payloads | Reporting & Analytics |
-| FR62 | Export candidate results and assessment data | Reporting & Analytics |
-| FR63 | In-app notifications in real-time for assessment, user lifecycle, admin events | Notifications |
-| FR64 | Email notifications for dispatch, completion, passwords, account events | Notifications |
-| FR65 | Configure notification preferences and toggle categories | Notifications |
-| FR66 | Mark notifications read/unread, bulk-manage | Notifications |
-| FR67 | Manage feature flags with real-time propagation to all services | Feature Flags & Config |
-| FR68 | Configure organization-specific settings (branding, assessment defaults, email domains) | Feature Flags & Config |
-| FR69 | Roll out features gradually by organization via feature flag targeting | Feature Flags & Config |
-| FR70 | External systems authenticate via API keys to dispatch assessments and retrieve results | External API Integration |
-| FR71 | API consumers query candidate skill profiles from adaptive testing | External API Integration |
-| FR72 | Webhook callbacks with enriched payloads (auto-graded, AI analysis, compatibility) | External API Integration |
-
-### 1.2 Non-Functional Requirements (27 NFRs)
-
-| ID | Description | Category |
-|----|-------------|----------|
-| NFR1 | API Gateway p95 response < 200ms under normal load | Performance |
-| NFR2 | Auto-grading p99 < 10s under concurrent load | Performance |
-| NFR3 | AI essay marking p95 < 15s per submission | Performance |
-| NFR4 | Frontend LCP < 2.5s on standard broadband | Performance |
-| NFR5 | Bulk upload handles 500 questions per batch without timeout | Performance |
-| NFR6 | Real-time notification delivery within 2s of trigger | Performance |
-| NFR7 | 100 concurrent assessment-takers per org without degradation | Scalability |
-| NFR8 | Question bank scales to 100,000+ questions with sub-second search | Scalability |
-| NFR9 | Event consumers process lifecycle events < 5s end-to-end | Scalability |
-| NFR10 | Candidate PII encrypted at rest (AES-256) and in transit (TLS 1.2+) | Security |
-| NFR11 | Authentication payloads encrypted between all services | Security |
-| NFR12 | API keys hashed with industry-standard KDF | Security |
-| NFR13 | Rate limiting: 60 req / 30s per client+service | Security |
-| NFR14 | Circuit breaker: open after 3 failures, 30s timeout | Security |
-| NFR15 | All PII access audit-logged with actor, action, timestamp | Security |
-| NFR16 | 99.5% uptime during business hours (Mon-Fri 8am-6pm GMT) | Reliability |
-| NFR17 | Assessment submissions: draft auto-save with recovery on network failure | Reliability |
-| NFR18 | Event bus: at-least-once processing for lifecycle events | Reliability |
-| NFR19 | Database migrations backward-compatible, zero-downtime deployments | Reliability |
-| NFR20 | WCAG 2.1 AA compliance for all assessment-taking and management UIs | Accessibility |
-| NFR21 | All interactive elements keyboard-navigable with visible focus indicators | Accessibility |
-| NFR22 | Color contrast 4.5:1 minimum for normal text, 3:1 for large text | Accessibility |
-| NFR23 | All images/icons have descriptive alt text or ARIA labels | Accessibility |
-| NFR24 | All services emit structured logs to centralized logging | Observability |
-| NFR25 | Distributed tracing spans all service-to-service calls | Observability |
-| NFR26 | Error monitoring captures/alerts on unhandled exceptions across services | Observability |
-| NFR27 | API Gateway exposes metrics for volume, latency, error rate, circuit breaker | Observability |
-
----
-
-## 2. FR Coverage Map
-
-Every FR maps to exactly one epic. No gaps, no overlaps.
-
-| FR | Epic | Story |
-|----|------|-------|
-| FR1 | E2: Difficulty Classification & Intelligent Assembly | 2.1 |
-| FR2 | E7: Calibration Pipeline | 7.1 |
-| FR3 | E7: Calibration Pipeline | 7.1 |
-| FR4 | E2: Difficulty Classification & Intelligent Assembly | 2.2 |
-| FR5 | E2: Difficulty Classification & Intelligent Assembly | 2.3 |
-| FR6 | E7: Calibration Pipeline | 7.2 |
-| FR7 | E2: Difficulty Classification & Intelligent Assembly | 2.4 |
-| FR8 | E2: Difficulty Classification & Intelligent Assembly | 2.5 |
-| FR9 | E2: Difficulty Classification & Intelligent Assembly | 2.5 |
-| FR10 | E2: Difficulty Classification & Intelligent Assembly | 2.6 |
-| FR11 | E3: AI Question Generation & Duplicate Detection | 3.3 |
-| FR12 | E3: AI Question Generation & Duplicate Detection | 3.4 |
-| FR13 | E3: AI Question Generation & Duplicate Detection | 3.5 |
-| FR14 | E3: AI Question Generation & Duplicate Detection | 3.1 |
-| FR15 | E3: AI Question Generation & Duplicate Detection | 3.2 |
-| FR16 | E1: Question Versioning & Lifecycle | 1.1 |
-| FR17 | E1: Question Versioning & Lifecycle | 1.2 |
-| FR18 | E1: Question Versioning & Lifecycle | 1.3 |
-| FR19 | E1: Question Versioning & Lifecycle | 1.4 |
-| FR20 | E4: Bulk Upload & Question Governance | 4.1 |
-| FR21 | E4: Bulk Upload & Question Governance | 4.2 |
-| FR22 | E9: Assessment Lifecycle & Reporting Enrichment | 9.1 |
-| FR23 | E9: Assessment Lifecycle & Reporting Enrichment | 9.1 |
-| FR24 | E9: Assessment Lifecycle & Reporting Enrichment | 9.2 |
-| FR25 | E9: Assessment Lifecycle & Reporting Enrichment | 9.2 |
-| FR26 | E5: Multi-File Coding IDE | 5.1 |
-| FR27 | E6: Auto-Grading & AI Code Review | 6.1 |
-| FR28 | E6: Auto-Grading & AI Code Review | 6.2 |
-| FR29 | E6: Auto-Grading & AI Code Review | 6.1 |
-| FR30 | E6: Auto-Grading & AI Code Review | 6.3 |
-| FR31 | E6: Auto-Grading & AI Code Review | 6.1 |
-| FR32 | E6: Auto-Grading & AI Code Review | 6.4 |
-| FR33 | E8: Pre-Test Compatibility & Candidate Experience | 8.1 |
-| FR34 | E8: Pre-Test Compatibility & Candidate Experience | 8.2 |
-| FR35 | E8: Pre-Test Compatibility & Candidate Experience | 8.2 |
-| FR36 | E8: Pre-Test Compatibility & Candidate Experience | 8.5 |
-| FR37 | E8: Pre-Test Compatibility & Candidate Experience | 8.5 |
-| FR38 | E8: Pre-Test Compatibility & Candidate Experience | 8.5 |
-| FR39 | E8: Pre-Test Compatibility & Candidate Experience | 8.5 |
-| FR40 | E8: Pre-Test Compatibility & Candidate Experience | 8.6 |
-| FR41 | E8: Pre-Test Compatibility & Candidate Experience | 8.3 |
-| FR42 | E8: Pre-Test Compatibility & Candidate Experience | 8.4 |
-| FR43 | E10: Adaptive Testing Engine | 10.1 |
-| FR44 | E10: Adaptive Testing Engine | 10.1 |
-| FR45 | E10: Adaptive Testing Engine | 10.1 |
-| FR46 | E10: Adaptive Testing Engine | 10.2 |
-| FR47 | E10: Adaptive Testing Engine | 10.3 |
-| FR48 | E9: Assessment Lifecycle & Reporting Enrichment | 9.3 |
-| FR49 | E9: Assessment Lifecycle & Reporting Enrichment | 9.3 |
-| FR50 | E9: Assessment Lifecycle & Reporting Enrichment | 9.3 |
-| FR51 | E9: Assessment Lifecycle & Reporting Enrichment | 9.4 |
-| FR52 | E9: Assessment Lifecycle & Reporting Enrichment | 9.4 |
-| FR53 | E9: Assessment Lifecycle & Reporting Enrichment | 9.5 |
-| FR54 | E9: Assessment Lifecycle & Reporting Enrichment | 9.5 |
-| FR55 | E9: Assessment Lifecycle & Reporting Enrichment | 9.6 |
-| FR56 | E9: Assessment Lifecycle & Reporting Enrichment | 9.6 |
-| FR57 | E9: Assessment Lifecycle & Reporting Enrichment | 9.7 |
-| FR58 | E9: Assessment Lifecycle & Reporting Enrichment | 9.8 |
-| FR59 | E9: Assessment Lifecycle & Reporting Enrichment | 9.7 |
-| FR60 | E9: Assessment Lifecycle & Reporting Enrichment | 9.8 |
-| FR61 | E9: Assessment Lifecycle & Reporting Enrichment | 9.9 |
-| FR62 | E9: Assessment Lifecycle & Reporting Enrichment | 9.7 |
-| FR63 | E9: Assessment Lifecycle & Reporting Enrichment | 9.10 |
-| FR64 | E9: Assessment Lifecycle & Reporting Enrichment | 9.10 |
-| FR65 | E9: Assessment Lifecycle & Reporting Enrichment | 9.10 |
-| FR66 | E9: Assessment Lifecycle & Reporting Enrichment | 9.10 |
-| FR67 | E9: Assessment Lifecycle & Reporting Enrichment | 9.11 |
-| FR68 | E9: Assessment Lifecycle & Reporting Enrichment | 9.11 |
-| FR69 | E9: Assessment Lifecycle & Reporting Enrichment | 9.11 |
-| FR70 | E9: Assessment Lifecycle & Reporting Enrichment | 9.9 |
-| FR71 | E10: Adaptive Testing Engine | 10.4 |
-| FR72 | E9: Assessment Lifecycle & Reporting Enrichment | 9.9 |
-
----
-
-## 3. Team Assignment Strategy
+## 1. Team Assignment Strategy
 
 **Team A -- Question Bank Intelligence & Question Lifecycle (backend-heavy)**
 Focus: test-creation service, calibration pipeline, AI integration, question data model.
@@ -260,7 +66,7 @@ flowchart TB
 
 ---
 
-## 4. Epic List
+## 2. Epic List
 
 ### Epic 1: Question Versioning & Lifecycle
 **Team:** Team A
@@ -344,7 +150,7 @@ flowchart TB
 
 ---
 
-## 5. Stories
+## 3. Stories
 
 ### Epic 1: Question Versioning & Lifecycle
 
@@ -1100,7 +906,7 @@ So that our CMS can use granular skill-level data for training pipeline decision
 
 ---
 
-## 6. Implementation Sequence
+## 4. Implementation Sequence
 
 ### Sprint-by-Sprint Timeline (Recommended)
 
@@ -1154,7 +960,7 @@ gantt
 
 ---
 
-## 7. Cross-Team Dependency Map
+## 5. Cross-Team Dependency Map
 
 ```mermaid
 flowchart LR
@@ -1208,7 +1014,7 @@ flowchart LR
 
 ---
 
-## 8. Story Dependency Chain Per Team
+## 6. Story Dependency Chain Per Team
 
 ```mermaid
 flowchart TD
@@ -1272,7 +1078,7 @@ flowchart TD
 
 ---
 
-## 9. Integration Points
+## 7. Integration Points
 
 ### 9.1 Shared Artifacts
 
@@ -1318,7 +1124,7 @@ flowchart TD
 
 ---
 
-## 10. Feature Flag Mapping
+## 8. Feature Flag Mapping
 
 All Q2 features are gated. The flag must be checked at both the API layer (backend) and the UI layer (frontend).
 
@@ -1337,7 +1143,7 @@ All Q2 features are gated. The flag must be checked at both the API layer (backe
 
 ---
 
-## 11. NFR Allocation
+## 9. NFR Allocation
 
 NFRs apply as cross-cutting constraints to all stories. Key NFR-to-story mappings:
 
@@ -1359,7 +1165,7 @@ NFRs apply as cross-cutting constraints to all stories. Key NFR-to-story mapping
 
 ---
 
-## 12. Definition of Done (Shared)
+## 10. Definition of Done (Shared)
 
 A story is done when ALL of the following are satisfied:
 
@@ -1373,3 +1179,197 @@ A story is done when ALL of the following are satisfied:
 8. No regressions in existing tests
 9. Cross-team contract tests pass (if story touches shared interfaces)
 10. PII handling follows encryption and audit-logging requirements
+
+## 11. Requirements Inventory
+
+### 1.1 Functional Requirements (72 FRs)
+
+| ID | Description | Capability Area |
+|----|-------------|-----------------|
+| FR1 | Classify questions using difficulty tier + Bloom's Taxonomy | Question Bank Intelligence |
+| FR2 | Continuously recalibrate difficulty tiers from assessment results | Question Bank Intelligence |
+| FR3 | Compute difficulty scores from pass/fail rates, time-to-answer, score distributions | Question Bank Intelligence |
+| FR4 | Test managers assign/override Bloom's Taxonomy levels per question | Question Bank Intelligence |
+| FR5 | Test managers view/override system-assigned difficulty tiers (tracked in version history) | Question Bank Intelligence |
+| FR6 | Flag questions with insufficient performance data for calibration review | Question Bank Intelligence |
+| FR7 | Specify question distribution by difficulty tier, Bloom's level, or combination | Question Bank Intelligence |
+| FR8 | Randomly select questions from matching classified pools | Question Bank Intelligence |
+| FR9 | Ensure no candidate receives the same question set | Question Bank Intelligence |
+| FR10 | Preview difficulty and Bloom's distribution of assembled test before dispatch | Question Bank Intelligence |
+| FR11 | Trigger AI-assisted question generation by domain, difficulty, Bloom's level, count | Question Bank Intelligence |
+| FR12 | AI-generated questions enter human review workflow before active bank | Question Bank Intelligence |
+| FR13 | Review, approve, edit, or reject AI-generated questions | Question Bank Intelligence |
+| FR14 | Detect and flag near-duplicate questions with similarity score before publish | Question Bank Intelligence |
+| FR15 | Prevent publishing questions exceeding configurable similarity threshold | Question Bank Intelligence |
+| FR16 | Version all question edits with full history and rollback | Question Bank Intelligence |
+| FR17 | Compare any two versions of a question side-by-side | Question Bank Intelligence |
+| FR18 | Archive questions, excluding from active pools while retaining audit history | Question Bank Intelligence |
+| FR19 | Mark questions as global, reusable across designated organizations | Question Bank Intelligence |
+| FR20 | Bulk upload coding questions via CSV/JSON template with validation | Question Bank Intelligence |
+| FR21 | Report bulk upload progress, success/failure counts, downloadable error details | Question Bank Intelligence |
+| FR22 | Create, configure, and dispatch assessments with proctor levels, duration, pass marks | Assessment Creation & Dispatch |
+| FR23 | Dispatch assessments via email, generic link, or bulk batch | Assessment Creation & Dispatch |
+| FR24 | Add, manage, and filter assessments by tags | Assessment Creation & Dispatch |
+| FR25 | View assessment dispatch history and recall active dispatches | Assessment Creation & Dispatch |
+| FR26 | Write and execute code in multi-file project-style IDE during assessments | Coding Assessment Engine |
+| FR27 | Auto-grade coding submissions using public and hidden test cases with limits | Coding Assessment Engine |
+| FR28 | Display clear pass/fail logs per test case with execution time and memory | Coding Assessment Engine |
+| FR29 | Support JavaScript, TypeScript, Python, and Java for code execution | Coding Assessment Engine |
+| FR30 | Define public test cases (visible) and hidden test cases (grading only) | Coding Assessment Engine |
+| FR31 | Enforce resource constraints (time limit, memory limit) per test case | Coding Assessment Engine |
+| FR32 | AI reviews candidate code for quality, patterns, and best practices | Coding Assessment Engine |
+| FR33 | Run pre-test compatibility check (browser, OS, network, camera, mic, screen sharing) | Candidate Experience & Proctoring |
+| FR34 | Provide clear remediation guidance when compatibility issues detected | Candidate Experience & Proctoring |
+| FR35 | Re-run compatibility check after resolving issues | Candidate Experience & Proctoring |
+| FR36 | ID verification via document OCR with confidence scoring | Candidate Experience & Proctoring |
+| FR37 | Face capture verification via face detection with quality validation | Candidate Experience & Proctoring |
+| FR38 | Monitor candidates via webcam capture, screenshot capture, tab-switching detection | Candidate Experience & Proctoring |
+| FR39 | Distinguish genuine violations from false positives (debounce, min-duration thresholds) | Candidate Experience & Proctoring |
+| FR40 | Candidates view assessment results after completion (when configured) | Candidate Experience & Proctoring |
+| FR41 | Track and report compatibility check pass/fail rates per browser, OS, network | Candidate Experience & Proctoring |
+| FR42 | Track assessment rejection rates from technical issues, surface trends to admins | Candidate Experience & Proctoring |
+| FR43 | Dynamically adjust question difficulty based on candidate performance | Adaptive Testing |
+| FR44 | Increase difficulty for subsequent questions on correct answers | Adaptive Testing |
+| FR45 | Decrease difficulty for subsequent questions on incorrect answers | Adaptive Testing |
+| FR46 | Generate skill-level profiles from adaptive assessment results | Adaptive Testing |
+| FR47 | Enable/disable adaptive mode per assessment | Adaptive Testing |
+| FR48 | Invite, activate, deactivate, delete users with RBAC (48 permissions) | User & Org Management |
+| FR49 | Create custom roles with specific permission combinations | User & Org Management |
+| FR50 | Users belong to multiple organizations and switch between them | User & Org Management |
+| FR51 | Create, activate, deactivate, remove organizations | User & Org Management |
+| FR52 | Review and approve/reject new organization applications | User & Org Management |
+| FR53 | Create skills with hierarchical levels, assign assessments to each level | Skills Management |
+| FR54 | Dispatch assessments via skill-level assignment | Skills Management |
+| FR55 | Bulk upload skills via CSV | Skills Management |
+| FR56 | Map skills to external systems for CMS integration | Skills Management |
+| FR57 | View assessment reports with candidate metrics, comparative analysis, score distributions | Reporting & Analytics |
+| FR58 | AI-powered candidate performance analysis and question analytics | Reporting & Analytics |
+| FR59 | View proctoring data (screenshots, webcam captures, violation logs) per candidate | Reporting & Analytics |
+| FR60 | Stream AI analytics insights in real-time | Reporting & Analytics |
+| FR61 | Webhook callbacks to external systems with enriched assessment payloads | Reporting & Analytics |
+| FR62 | Export candidate results and assessment data | Reporting & Analytics |
+| FR63 | In-app notifications in real-time for assessment, user lifecycle, admin events | Notifications |
+| FR64 | Email notifications for dispatch, completion, passwords, account events | Notifications |
+| FR65 | Configure notification preferences and toggle categories | Notifications |
+| FR66 | Mark notifications read/unread, bulk-manage | Notifications |
+| FR67 | Manage feature flags with real-time propagation to all services | Feature Flags & Config |
+| FR68 | Configure organization-specific settings (branding, assessment defaults, email domains) | Feature Flags & Config |
+| FR69 | Roll out features gradually by organization via feature flag targeting | Feature Flags & Config |
+| FR70 | External systems authenticate via API keys to dispatch assessments and retrieve results | External API Integration |
+| FR71 | API consumers query candidate skill profiles from adaptive testing | External API Integration |
+| FR72 | Webhook callbacks with enriched payloads (auto-graded, AI analysis, compatibility) | External API Integration |
+
+### 1.2 Non-Functional Requirements (27 NFRs)
+
+| ID | Description | Category |
+|----|-------------|----------|
+| NFR1 | API Gateway p95 response < 200ms under normal load | Performance |
+| NFR2 | Auto-grading p99 < 10s under concurrent load | Performance |
+| NFR3 | AI essay marking p95 < 15s per submission | Performance |
+| NFR4 | Frontend LCP < 2.5s on standard broadband | Performance |
+| NFR5 | Bulk upload handles 500 questions per batch without timeout | Performance |
+| NFR6 | Real-time notification delivery within 2s of trigger | Performance |
+| NFR7 | 100 concurrent assessment-takers per org without degradation | Scalability |
+| NFR8 | Question bank scales to 100,000+ questions with sub-second search | Scalability |
+| NFR9 | Event consumers process lifecycle events < 5s end-to-end | Scalability |
+| NFR10 | Candidate PII encrypted at rest (AES-256) and in transit (TLS 1.2+) | Security |
+| NFR11 | Authentication payloads encrypted between all services | Security |
+| NFR12 | API keys hashed with industry-standard KDF | Security |
+| NFR13 | Rate limiting: 60 req / 30s per client+service | Security |
+| NFR14 | Circuit breaker: open after 3 failures, 30s timeout | Security |
+| NFR15 | All PII access audit-logged with actor, action, timestamp | Security |
+| NFR16 | 99.5% uptime during business hours (Mon-Fri 8am-6pm GMT) | Reliability |
+| NFR17 | Assessment submissions: draft auto-save with recovery on network failure | Reliability |
+| NFR18 | Event bus: at-least-once processing for lifecycle events | Reliability |
+| NFR19 | Database migrations backward-compatible, zero-downtime deployments | Reliability |
+| NFR20 | WCAG 2.1 AA compliance for all assessment-taking and management UIs | Accessibility |
+| NFR21 | All interactive elements keyboard-navigable with visible focus indicators | Accessibility |
+| NFR22 | Color contrast 4.5:1 minimum for normal text, 3:1 for large text | Accessibility |
+| NFR23 | All images/icons have descriptive alt text or ARIA labels | Accessibility |
+| NFR24 | All services emit structured logs to centralized logging | Observability |
+| NFR25 | Distributed tracing spans all service-to-service calls | Observability |
+| NFR26 | Error monitoring captures/alerts on unhandled exceptions across services | Observability |
+| NFR27 | API Gateway exposes metrics for volume, latency, error rate, circuit breaker | Observability |
+
+---
+
+## 12. FR Coverage Map
+
+Every FR maps to exactly one epic. No gaps, no overlaps.
+
+| FR | Epic | Story |
+|----|------|-------|
+| FR1 | E2: Difficulty Classification & Intelligent Assembly | 2.1 |
+| FR2 | E7: Calibration Pipeline | 7.1 |
+| FR3 | E7: Calibration Pipeline | 7.1 |
+| FR4 | E2: Difficulty Classification & Intelligent Assembly | 2.2 |
+| FR5 | E2: Difficulty Classification & Intelligent Assembly | 2.3 |
+| FR6 | E7: Calibration Pipeline | 7.2 |
+| FR7 | E2: Difficulty Classification & Intelligent Assembly | 2.4 |
+| FR8 | E2: Difficulty Classification & Intelligent Assembly | 2.5 |
+| FR9 | E2: Difficulty Classification & Intelligent Assembly | 2.5 |
+| FR10 | E2: Difficulty Classification & Intelligent Assembly | 2.6 |
+| FR11 | E3: AI Question Generation & Duplicate Detection | 3.3 |
+| FR12 | E3: AI Question Generation & Duplicate Detection | 3.4 |
+| FR13 | E3: AI Question Generation & Duplicate Detection | 3.5 |
+| FR14 | E3: AI Question Generation & Duplicate Detection | 3.1 |
+| FR15 | E3: AI Question Generation & Duplicate Detection | 3.2 |
+| FR16 | E1: Question Versioning & Lifecycle | 1.1 |
+| FR17 | E1: Question Versioning & Lifecycle | 1.2 |
+| FR18 | E1: Question Versioning & Lifecycle | 1.3 |
+| FR19 | E1: Question Versioning & Lifecycle | 1.4 |
+| FR20 | E4: Bulk Upload & Question Governance | 4.1 |
+| FR21 | E4: Bulk Upload & Question Governance | 4.2 |
+| FR22 | E9: Assessment Lifecycle & Reporting Enrichment | 9.1 |
+| FR23 | E9: Assessment Lifecycle & Reporting Enrichment | 9.1 |
+| FR24 | E9: Assessment Lifecycle & Reporting Enrichment | 9.2 |
+| FR25 | E9: Assessment Lifecycle & Reporting Enrichment | 9.2 |
+| FR26 | E5: Multi-File Coding IDE | 5.1 |
+| FR27 | E6: Auto-Grading & AI Code Review | 6.1 |
+| FR28 | E6: Auto-Grading & AI Code Review | 6.2 |
+| FR29 | E6: Auto-Grading & AI Code Review | 6.1 |
+| FR30 | E6: Auto-Grading & AI Code Review | 6.3 |
+| FR31 | E6: Auto-Grading & AI Code Review | 6.1 |
+| FR32 | E6: Auto-Grading & AI Code Review | 6.4 |
+| FR33 | E8: Pre-Test Compatibility & Candidate Experience | 8.1 |
+| FR34 | E8: Pre-Test Compatibility & Candidate Experience | 8.2 |
+| FR35 | E8: Pre-Test Compatibility & Candidate Experience | 8.2 |
+| FR36 | E8: Pre-Test Compatibility & Candidate Experience | 8.5 |
+| FR37 | E8: Pre-Test Compatibility & Candidate Experience | 8.5 |
+| FR38 | E8: Pre-Test Compatibility & Candidate Experience | 8.5 |
+| FR39 | E8: Pre-Test Compatibility & Candidate Experience | 8.5 |
+| FR40 | E8: Pre-Test Compatibility & Candidate Experience | 8.6 |
+| FR41 | E8: Pre-Test Compatibility & Candidate Experience | 8.3 |
+| FR42 | E8: Pre-Test Compatibility & Candidate Experience | 8.4 |
+| FR43 | E10: Adaptive Testing Engine | 10.1 |
+| FR44 | E10: Adaptive Testing Engine | 10.1 |
+| FR45 | E10: Adaptive Testing Engine | 10.1 |
+| FR46 | E10: Adaptive Testing Engine | 10.2 |
+| FR47 | E10: Adaptive Testing Engine | 10.3 |
+| FR48 | E9: Assessment Lifecycle & Reporting Enrichment | 9.3 |
+| FR49 | E9: Assessment Lifecycle & Reporting Enrichment | 9.3 |
+| FR50 | E9: Assessment Lifecycle & Reporting Enrichment | 9.3 |
+| FR51 | E9: Assessment Lifecycle & Reporting Enrichment | 9.4 |
+| FR52 | E9: Assessment Lifecycle & Reporting Enrichment | 9.4 |
+| FR53 | E9: Assessment Lifecycle & Reporting Enrichment | 9.5 |
+| FR54 | E9: Assessment Lifecycle & Reporting Enrichment | 9.5 |
+| FR55 | E9: Assessment Lifecycle & Reporting Enrichment | 9.6 |
+| FR56 | E9: Assessment Lifecycle & Reporting Enrichment | 9.6 |
+| FR57 | E9: Assessment Lifecycle & Reporting Enrichment | 9.7 |
+| FR58 | E9: Assessment Lifecycle & Reporting Enrichment | 9.8 |
+| FR59 | E9: Assessment Lifecycle & Reporting Enrichment | 9.7 |
+| FR60 | E9: Assessment Lifecycle & Reporting Enrichment | 9.8 |
+| FR61 | E9: Assessment Lifecycle & Reporting Enrichment | 9.9 |
+| FR62 | E9: Assessment Lifecycle & Reporting Enrichment | 9.7 |
+| FR63 | E9: Assessment Lifecycle & Reporting Enrichment | 9.10 |
+| FR64 | E9: Assessment Lifecycle & Reporting Enrichment | 9.10 |
+| FR65 | E9: Assessment Lifecycle & Reporting Enrichment | 9.10 |
+| FR66 | E9: Assessment Lifecycle & Reporting Enrichment | 9.10 |
+| FR67 | E9: Assessment Lifecycle & Reporting Enrichment | 9.11 |
+| FR68 | E9: Assessment Lifecycle & Reporting Enrichment | 9.11 |
+| FR69 | E9: Assessment Lifecycle & Reporting Enrichment | 9.11 |
+| FR70 | E9: Assessment Lifecycle & Reporting Enrichment | 9.9 |
+| FR71 | E10: Adaptive Testing Engine | 10.4 |
+| FR72 | E9: Assessment Lifecycle & Reporting Enrichment | 9.9 |
+
+---
