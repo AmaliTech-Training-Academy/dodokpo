@@ -5,16 +5,18 @@ repo_name: AmaliTech-Training-Academy/dodokpo
 
 theme:
   name: material
+  logo: assets/images/logo-white.png
+  favicon: assets/images/logo.png
   palette:
     - scheme: default
-      primary: indigo
-      accent: orange
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - scheme: slate
-      primary: indigo
-      accent: orange
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -52,6 +54,7 @@ markdown_extensions:
 
 extra_css:
   - assets/css/mermaid-fullscreen.css
+  - assets/css/brand.css
 
 extra_javascript:
   - https://unpkg.com/mermaid@11/dist/mermaid.min.js

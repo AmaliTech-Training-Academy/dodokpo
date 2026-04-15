@@ -1,0 +1,92 @@
+/* AmaliTech Brand Colors */
+/* Primary Orange: #E85818 */
+/* Dark Charcoal: #383838 */
+
+:root {
+  /* Light mode */
+  --md-primary-fg-color: #E85818;
+  --md-primary-fg-color--light: #F07040;
+  --md-primary-fg-color--dark: #C04810;
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: #E85818;
+  --md-accent-fg-color--transparent: rgba(232, 88, 24, 0.1);
+  --md-typeset-a-color: #E85818;
+}
+
+[data-md-color-scheme="slate"] {
+  /* Dark mode */
+  --md-primary-fg-color: #E85818;
+  --md-primary-fg-color--light: #F07040;
+  --md-primary-fg-color--dark: #C04810;
+  --md-accent-fg-color: #F07040;
+  --md-accent-fg-color--transparent: rgba(240, 112, 64, 0.1);
+  --md-typeset-a-color: #F07040;
+}
+
+/* Header bar */
+.md-header {
+  background-color: #383838;
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  background-color: #1a1a1a;
+}
+
+/* Tab bar active state */
+.md-tabs {
+  background-color: #2d2d2d;
+}
+
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #111111;
+}
+
+.md-tabs__link--active,
+.md-tabs__link:hover {
+  color: #E85818 !important;
+}
+
+/* Logo sizing */
+.md-header__button.md-logo img {
+  height: 28px;
+  width: auto;
+}
+
+/* Sidebar active item */
+.md-nav__link--active {
+  color: #E85818 !important;
+  font-weight: 600;
+}
+
+/* Search highlight */
+.md-search-result mark {
+  background-color: rgba(232, 88, 24, 0.3);
+}
+
+/* Scrollbar accent (webkit) */
+::-webkit-scrollbar-thumb {
+  background-color: #E85818;
+}
+
+/* Code block accent */
+.highlight .hll {
+  background-color: rgba(232, 88, 24, 0.1);
+}
+
+/* Table header */
+.md-typeset table:not([class]) th {
+  background-color: rgba(232, 88, 24, 0.08);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background-color: rgba(232, 88, 24, 0.15);
+}
+
+/* Footer */
+.md-footer {
+  background-color: #383838;
+}
+
+[data-md-color-scheme="slate"] .md-footer {
+  background-color: #1a1a1a;
+}
