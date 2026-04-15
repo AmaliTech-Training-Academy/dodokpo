@@ -35,45 +35,50 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.9);
   z-index: 9999;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   cursor: pointer;
 }
 
-.mermaid-fullscreen-container {
-  background: var(--md-default-bg-color, #fff);
-  border-radius: 8px;
-  padding: 24px;
-  max-width: 95vw;
-  max-height: 92vh;
-  overflow: auto;
-  cursor: default;
-  position: relative;
-}
-
-.mermaid-fullscreen-container .mermaid {
-  min-width: 60vw;
+.mermaid-fullscreen-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 20px;
+  flex-shrink: 0;
 }
 
 .mermaid-fullscreen-close {
-  position: sticky;
-  top: 0;
-  float: right;
   background: var(--md-primary-fg-color, #4051b5);
   color: #fff;
   border: none;
   border-radius: 4px;
-  padding: 6px 16px;
+  padding: 8px 20px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  z-index: 1;
-  margin-bottom: 12px;
 }
 
 .mermaid-fullscreen-close:hover {
   background: var(--md-primary-fg-color--dark, #303f9f);
+}
+
+.mermaid-fullscreen-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 0 20px 20px;
+  cursor: default;
+}
+
+.mermaid-fullscreen-content svg {
+  width: 92vw !important;
+  height: auto !important;
+  max-height: 85vh;
+  background: var(--md-default-bg-color, #fff);
+  border-radius: 8px;
+  padding: 24px;
 }

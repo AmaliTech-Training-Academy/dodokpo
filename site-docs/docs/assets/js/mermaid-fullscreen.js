@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Wait for Mermaid to render
-  const observer = new MutationObserver(function () {
-    document.querySelectorAll('.mermaid:not([data-fullscreen-ready])').forEach(function (el) {
-      el.setAttribute('data-fullscreen-ready', 'true');
+  var observer = new MutationObserver(function () {
+    document.querySelectorAll('.mermaid:not([data-fs-ready])').forEach(function (el) {
+      el.setAttribute('data-fs-ready', 'true');
 
-      // Create fullscreen button
       var btn = document.createElement('button');
       btn.className = 'mermaid-fullscreen-btn';
       btn.title = 'View fullscreen';
@@ -14,60 +12,72 @@ document.addEventListener('DOMContentLoaded', function () {
         openFullscreen(el);
       });
 
-      // Wrap if not already wrapped
       if (!el.parentElement.classList.contains('mermaid-wrapper')) {
         var wrapper = document.createElement('div');
         wrapper.className = 'mermaid-wrapper';
         el.parentNode.insertBefore(wrapper, el);
         wrapper.appendChild(el);
-        wrapper.appendChild(btn);
-      } else {
-        el.parentElement.appendChild(btn);
       }
+      el.parentElement.appendChild(btn);
     });
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
 
   function openFullscreen(mermaidEl) {
+    // Grab the rendered SVG directly
+    var svg = mermaidEl.querySelector('svg');
+    if (!svg) return;
+
+    var svgClone = svg.cloneNode(true);
+    // Remove any inline width/height constraints so CSS can control sizing
+    svgClone.removeAttribute('width');
+    svgClone.removeAttribute('height');
+    svgClone.removeAttribute('style');
+    svgClone.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+    // Build overlay
     var overlay = document.createElement('div');
     overlay.className = 'mermaid-fullscreen-overlay';
 
-    var container = document.createElement('div');
-    container.className = 'mermaid-fullscreen-container';
-
-    var clone = mermaidEl.cloneNode(true);
-    clone.style.maxWidth = 'none';
-    clone.style.maxHeight = 'none';
+    var toolbar = document.createElement('div');
+    toolbar.className = 'mermaid-fullscreen-toolbar';
 
     var closeBtn = document.createElement('button');
     closeBtn.className = 'mermaid-fullscreen-close';
     closeBtn.innerHTML = '&times; Close';
     closeBtn.addEventListener('click', function () {
-      document.body.removeChild(overlay);
-      document.body.style.overflow = '';
+      cleanup();
     });
+    toolbar.appendChild(closeBtn);
 
-    container.appendChild(closeBtn);
-    container.appendChild(clone);
-    overlay.appendChild(container);
+    var content = document.createElement('div');
+    content.className = 'mermaid-fullscreen-content';
+    content.appendChild(svgClone);
 
+    overlay.appendChild(toolbar);
+    overlay.appendChild(content);
+
+    // Close on backdrop click
     overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) {
-        document.body.removeChild(overlay);
-        document.body.style.overflow = '';
+      if (e.target === overlay || e.target === content) {
+        cleanup();
       }
     });
 
-    document.addEventListener('keydown', function handler(e) {
-      if (e.key === 'Escape') {
-        if (document.querySelector('.mermaid-fullscreen-overlay')) {
-          document.body.removeChild(overlay);
-          document.body.style.overflow = '';
-        }
-        document.removeEventListener('keydown', handler);
+    // Close on Escape
+    function onKey(e) {
+      if (e.key === 'Escape') cleanup();
+    }
+    document.addEventListener('keydown', onKey);
+
+    function cleanup() {
+      if (overlay.parentNode) {
+        document.body.removeChild(overlay);
       }
-    });
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+    }
 
     document.body.appendChild(overlay);
     document.body.style.overflow = 'hidden';
